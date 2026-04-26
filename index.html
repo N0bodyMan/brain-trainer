@@ -37,7 +37,7 @@ body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:1
 h1{font-size:18px;font-weight:600;letter-spacing:-.4px;flex:1;min-width:0;}
 h1 span{color:var(--accent);}
 .top-bar-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-.theme-btn{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;font-family:var(--mono);font-size:11px;color:var(--text2);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow);}
+.theme-btn{background:var(--surface);border:1px solid var(--border2);border-radius:50%;width:36px;height:36px;font-size:16px;color:var(--text2);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);padding:0;}
 .theme-btn:hover{color:var(--text);border-color:var(--accent);}
 .stats-top-btn{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;font-family:var(--sans);font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;box-shadow:var(--shadow);}
 .stats-top-btn:hover{color:var(--text);border-color:var(--accent);}
@@ -248,8 +248,8 @@ h1 span{color:var(--accent);}
     <h1>тренажёр <span>мозга</span></h1>
     <div class="top-bar-right">
       <button class="stats-top-btn" id="statsBtnTop" onclick="showStats(this)">📊 Статистика</button>
-      <button class="theme-btn" onclick="toggleTheme()">
-        <span id="themeIcon">☽</span><span id="themeLabel">тёмная</span>
+      <button class="theme-btn" onclick="toggleTheme()" title="Сменить тему">
+        <span id="themeIcon">☽</span>
       </button>
     </div>
   </div>
@@ -337,6 +337,12 @@ h1 span{color:var(--accent);}
             <button class="op-btn on" data-op="-" onclick="toggleOp(this)">−</button>
             <button class="op-btn on" data-op="×" onclick="toggleOp(this)">×</button>
             <button class="op-btn on" data-op="÷" onclick="toggleOp(this)">÷</button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Ответы</span>
+          <div class="op-toggles">
+            <button class="op-btn on" id="allowNegBtn" onclick="toggleAllowNeg(this)">± отрицательные</button>
           </div>
         </div>
       </div>
@@ -529,7 +535,6 @@ function toggleTheme(){
   const h=document.documentElement,dark=h.getAttribute('data-theme')==='dark';
   h.setAttribute('data-theme',dark?'light':'dark');
   document.getElementById('themeIcon').textContent=dark?'☽':'☀';
-  document.getElementById('themeLabel').textContent=dark?'тёмная':'светлая';
 }
 
 // Стоп-функции каждого упражнения — вызываются при переключении вкладки
@@ -640,8 +645,23 @@ let msRunning=false,msTimer=null,msLeft=0,msTotal_t=0;
 let msT=0,msR=0,msW=0,msAns=0,msDiff='medium';
 let msDebT=null;const MS_DB=600;
 let msNeg=false; // is current input negative
+let msAllowNeg=true; // allow negative answers
 
 function setDiff(btn){document.querySelectorAll('.diff-btn[data-diff]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');msDiff=btn.dataset.diff;}
+function toggleAllowNeg(btn){
+  msAllowNeg=!msAllowNeg;
+  btn.classList.toggle('on',msAllowNeg);
+  // hide/show sign button
+  const sb=document.getElementById('signBtn');
+  if(sb)sb.style.display=msAllowNeg?'':'none';
+  // if turned off and currently negative, clear
+  if(!msAllowNeg){
+    msNeg=false;
+    const inp=document.getElementById('mathInput');
+    if(inp)inp.value=inp.value.replace(/^-/,'');
+    if(sb)sb.classList.remove('neg');
+  }
+}
 function toggleOp(btn){const ons=document.querySelectorAll('.op-btn.on');if(btn.classList.contains('on')&&ons.length<=1)return;btn.classList.toggle('on');}
 function activeOps(){return[...document.querySelectorAll('.op-btn.on')].map(b=>b.dataset.op);}
 
@@ -690,10 +710,10 @@ function cancelMsDb(){
 function genQ(){
   const ops=activeOps(),op=ops[ri(ops.length)];
   let a,b,ans,qs;const d=msDiff;
-  if(op==='+'){const l=d==='easy'?20:d==='medium'?100:500,neg=d==='hard';a=neg?rndSigned(l):ri(l);b=neg?rndSigned(l):ri(l);ans=a+b;qs=`${a} + ${b}`;}
-  else if(op==='-'){const l=d==='easy'?20:d==='medium'?100:500,neg=d==='hard';a=neg?rndSigned(l):ri(l);b=neg?rndSigned(l):ri(l);ans=a-b;qs=`${a} − ${b}`;}
-  else if(op==='×'){const l=d==='easy'?10:d==='medium'?15:25,neg=d!=='easy';a=neg?rndSigned(l):ri(l);b=neg?rndSigned(l):ri(l);ans=a*b;qs=`${a} × ${b}`;}
-  else{const divs=d==='easy'?[2,3,4,5]:[2,3,4,5,6,7,8,9,10,11,12];b=divs[ri(divs.length)];const m=d==='easy'?10:d==='medium'?20:50,neg=d==='hard';ans=neg?rndSigned(m):ri(m);a=ans*b;qs=`${a} ÷ ${b}`;}
+  if(op==='+'){const l=d==='easy'?20:d==='medium'?100:500,neg=d==='hard'&&msAllowNeg;a=neg?rndSigned(l):ri(l);b=neg?rndSigned(l):ri(l);ans=a+b;qs=`${a} + ${b}`;}
+  else if(op==='-'){const l=d==='easy'?20:d==='medium'?100:500,neg=d==='hard'&&msAllowNeg;a=neg?rndSigned(l):ri(l);b=neg?rndSigned(l):ri(l);ans=a-b;qs=`${a} − ${b}`;}
+  else if(op==='×'){const l=d==='easy'?10:d==='medium'?15:25,neg=d!=='easy'&&msAllowNeg;a=neg?rndSigned(l):ri(l);b=neg?rndSigned(l):ri(l);ans=a*b;qs=`${a} × ${b}`;}
+  else{const divs=d==='easy'?[2,3,4,5]:[2,3,4,5,6,7,8,9,10,11,12];b=divs[ri(divs.length)];const m=d==='easy'?10:d==='medium'?20:50,neg=d==='hard'&&msAllowNeg;ans=neg?rndSigned(m):ri(m);a=ans*b;qs=`${a} ÷ ${b}`;}
   return{qs,ans};
 }
 
@@ -706,7 +726,7 @@ function startSession(){
   document.getElementById('timerWrap').style.display='block';
   const inp=document.getElementById('mathInput');
   inp.disabled=false;inp.value='';msNeg=false;
-  const sBtn=document.getElementById('signBtn');sBtn.disabled=false;sBtn.classList.remove('neg');
+  const sBtn=document.getElementById('signBtn');sBtn.disabled=false;sBtn.classList.remove('neg');sBtn.style.display=msAllowNeg?'':'none';
   inp.addEventListener('input',onMsInput);
   inp.addEventListener('keydown',e=>{if(e.key==='Enter'){cancelMsDb();submitAns();}});
   document.getElementById('submitBtn').disabled=false;
@@ -758,7 +778,7 @@ function buildMathScreen(){
     <button class="screen-start-btn" id="screenStartBtn" onclick="toggleSession()">Старт</button>`;
   document.getElementById('mathInput').disabled=true;
   document.getElementById('submitBtn').disabled=true;
-  const sb=document.getElementById('signBtn');sb.disabled=true;sb.classList.remove('neg');
+  const sb=document.getElementById('signBtn');sb.disabled=true;sb.classList.remove('neg');sb.style.display=msAllowNeg?'':'none';
   document.getElementById('mathInput').value='';msNeg=false;
 }
 function msUpdateStats(){
