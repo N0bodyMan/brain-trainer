@@ -5,132 +5,152 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Тренажёр мозга</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-
-<!-- PWA -->
-<link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Мозг">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-<meta name="theme-color" content="#4f6ef7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0e0f14" media="(prefers-color-scheme: dark)">
 <style>
-:root {
+:root{
   --bg:#f7f8fa;--surface:#fff;--surface2:#eef0f4;--surface3:#e4e7ed;
   --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.12);
   --text:#111318;--text2:#5c6270;--text3:#9aa0ad;
   --accent:#4f6ef7;--accent-soft:#eaedfe;--accent-text:#2b4ae0;
+  --green:#1a6e4a;--green-bg:#d4f4e8;--green-dark:#0f2e22;
+  --red:#9b1c2a;--red-bg:#ffdce0;--red-dark:#2e0d12;
+  --amber:#8a5800;--amber-bg:#fff0d4;
   --mono:'JetBrains Mono',monospace;--sans:'Syne',sans-serif;
   --radius:16px;--rsm:10px;
   --shadow:0 2px 12px rgba(0,0,0,0.06);--shadow-md:0 4px 20px rgba(0,0,0,0.10);
 }
-[data-theme="dark"] {
+[data-theme="dark"]{
   --bg:#0e0f14;--surface:#161820;--surface2:#1e2029;--surface3:#262834;
   --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.10);
   --text:#e8eaf0;--text2:#7a7f90;--text3:#454a58;
   --accent:#6b87ff;--accent-soft:#1a1f3a;--accent-text:#9eb3ff;
+  --green:#5ec893;--green-bg:#0f2e22;--green-dark:#0f2e22;
+  --red:#e07080;--red-bg:#2e0d12;--red-dark:#2e0d12;
+  --amber:#d4a030;--amber-bg:#2e2000;
   --shadow:0 2px 12px rgba(0,0,0,0.3);--shadow-md:0 4px 24px rgba(0,0,0,0.4);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;padding:28px 16px 64px;transition:background .25s,color .25s;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;padding:24px 16px 72px;transition:background .25s,color .25s;}
 .container{max-width:560px;margin:0 auto;}
 
-.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
-h1{font-size:18px;font-weight:600;letter-spacing:-0.4px;}
+/* TOP BAR */
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+h1{font-size:18px;font-weight:600;letter-spacing:-.4px;}
 h1 span{color:var(--accent);}
-.theme-btn{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:7px 16px;font-family:var(--mono);font-size:11px;color:var(--text2);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:7px;box-shadow:var(--shadow);}
+.theme-btn{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;font-family:var(--mono);font-size:11px;color:var(--text2);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;box-shadow:var(--shadow);}
 .theme-btn:hover{color:var(--text);border-color:var(--accent);}
 
-.tabs{display:flex;gap:3px;background:var(--surface2);border-radius:12px;padding:4px;margin-bottom:28px;overflow-x:auto;scrollbar-width:none;}
+/* TABS */
+.tabs{display:flex;gap:3px;background:var(--surface2);border-radius:12px;padding:4px;margin-bottom:24px;overflow-x:auto;scrollbar-width:none;}
 .tabs::-webkit-scrollbar{display:none;}
-.tab{flex:1;min-width:max-content;padding:9px 11px;border:none;border-radius:9px;background:transparent;font-family:var(--sans);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.tab{flex:1;min-width:max-content;padding:8px 10px;border:none;border-radius:9px;background:transparent;font-family:var(--sans);font-size:11.5px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s;white-space:nowrap;}
 .tab.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow);}
 .pane{display:none;}.pane.active{display:block;}
 
+/* DESCRIPTION BLOCK */
+.desc-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow);}
+.desc-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;}
+.desc-title{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.3px;display:flex;align-items:center;gap:7px;}
+.desc-title .desc-icon{font-size:15px;}
+.desc-chevron{font-size:12px;color:var(--text3);transition:transform .2s;}
+.desc-block.open .desc-chevron{transform:rotate(180deg);}
+.desc-body{display:none;margin-top:12px;border-top:1px solid var(--border);padding-top:12px;}
+.desc-block.open .desc-body{display:block;}
+.desc-body p{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:8px;}
+.desc-body p:last-child{margin-bottom:0;}
+.desc-body strong{color:var(--text);font-weight:600;}
+.desc-steps{list-style:none;padding:0;margin:8px 0;}
+.desc-steps li{font-size:12px;color:var(--text2);padding:4px 0;padding-left:18px;position:relative;line-height:1.5;}
+.desc-steps li::before{content:counter(step);counter-increment:step;position:absolute;left:0;font-family:var(--mono);font-size:10px;background:var(--accent-soft);color:var(--accent-text);border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;top:5px;}
+.desc-steps{counter-reset:step;}
+[data-theme="dark"] .desc-steps li::before{background:var(--accent-soft);color:var(--accent);}
+
+/* SETTINGS COLLAPSIBLE */
+.settings-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;box-shadow:var(--shadow);overflow:hidden;}
+.settings-header{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;cursor:pointer;user-select:none;}
+.settings-title{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.6px;text-transform:uppercase;display:flex;align-items:center;gap:7px;}
+.settings-chevron{font-size:12px;color:var(--text3);transition:transform .2s;}
+.settings-panel.open .settings-chevron{transform:rotate(180deg);}
+.settings-body{display:none;padding:0 16px 16px;display:none;flex-direction:column;gap:12px;}
+.settings-panel.open .settings-body{display:flex;}
+.settings-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.settings-label{font-size:11px;font-weight:500;color:var(--text3);min-width:80px;letter-spacing:.4px;text-transform:uppercase;}
+.time-input{width:70px;padding:7px 10px;border:1px solid var(--border2);border-radius:var(--rsm);font-family:var(--mono);font-size:15px;font-weight:500;color:var(--text);background:var(--surface2);text-align:center;}
+.time-input:focus{outline:none;border-color:var(--accent);}
+.op-toggles,.diff-btns{display:flex;gap:5px;flex-wrap:wrap;}
+.op-btn,.diff-btn{font-family:var(--mono);font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;transition:all .18s;font-weight:500;}
+.op-btn.on,.diff-btn.on{background:var(--accent-soft);color:var(--accent-text);border-color:var(--accent);}
+[data-theme="dark"] .op-btn.on,[data-theme="dark"] .diff-btn.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);}
+
 /* FLIP CARDS */
 .flip-wrap{perspective:1000px;}
-.main-flip{margin-bottom:16px;}
+.main-flip{margin-bottom:14px;}
 .main-flip .flip-inner{position:relative;height:150px;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.4,0,.2,1);cursor:pointer;border-radius:var(--radius);}
 .main-flip .flip-inner.flipped{transform:rotateY(180deg);}
 .main-flip .flip-front,.main-flip .flip-back{position:absolute;inset:0;border-radius:var(--radius);backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;align-items:center;justify-content:center;}
 .main-flip .flip-front{background:var(--surface);border:1px solid var(--border2);box-shadow:var(--shadow-md);}
 .main-flip .flip-back{background:var(--surface2);border:1px solid var(--border);transform:rotateY(180deg);flex-direction:column;gap:4px;}
-
-.ans-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:18px;}
+.ans-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px;}
 .ans-flip .flip-inner{position:relative;height:80px;transform-style:preserve-3d;transition:transform .45s cubic-bezier(.4,0,.2,1);cursor:pointer;border-radius:var(--rsm);}
 .ans-flip .flip-inner.flipped{transform:rotateY(180deg);}
 .ans-flip .flip-front,.ans-flip .flip-back{position:absolute;inset:0;border-radius:var(--rsm);backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:var(--surface);border:1px solid var(--border2);}
 .ans-flip .flip-back{transform:rotateY(180deg);background:var(--surface2);}
-
 .main-digits{font-family:var(--mono);font-size:54px;font-weight:500;letter-spacing:10px;color:var(--text);}
 .reveal-hint{display:flex;flex-direction:column;align-items:center;gap:6px;}
 .eye-icon{font-size:28px;line-height:1;}
 .eye-label{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.5px;}
-
 .plus-badge{font-family:var(--mono);font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px;display:inline-block;}
 .p1{background:#dce8ff;color:#2952cc;}.p2{background:#d4f4e8;color:#1a6e4a;}.p3{background:#fff0d4;color:#8a5800;}.p4{background:#ffe8d4;color:#8a3a00;}.p5{background:#ffdce0;color:#9b1c2a;}
 [data-theme="dark"] .p1{background:#1a2550;color:#8aabf5;}[data-theme="dark"] .p2{background:#0f2e22;color:#5ec893;}[data-theme="dark"] .p3{background:#2e2000;color:#d4a030;}[data-theme="dark"] .p4{background:#2e1500;color:#d48030;}[data-theme="dark"] .p5{background:#2e0d12;color:#e07080;}
 .ans-val{font-family:var(--mono);font-size:17px;font-weight:500;letter-spacing:2px;color:var(--text);}
 
 /* BUTTONS */
-.btn-row{display:flex;gap:8px;flex-wrap:wrap;}
-.btn{font-family:var(--sans);font-size:13px;font-weight:500;padding:10px 18px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;transition:background .15s,transform .1s,box-shadow .15s;box-shadow:var(--shadow);letter-spacing:-0.2px;}
-.btn:hover{background:var(--surface2);box-shadow:none;}.btn:active{transform:scale(.97);}
-.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 3px 12px rgba(79,110,247,0.25);}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+.btn{font-family:var(--sans);font-size:13px;font-weight:500;padding:10px 18px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--surface);color:var(--text);cursor:pointer;transition:background .15s,transform .1s;box-shadow:var(--shadow);}
+.btn:hover{background:var(--surface2);}.btn:active{transform:scale(.97);}
+.btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 3px 12px rgba(79,110,247,0.22);}
 .btn.primary:hover{opacity:.9;}
-.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
-
-/* SETTINGS */
-.settings-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:16px;display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow);}
-.settings-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-.settings-label{font-size:11px;font-weight:500;color:var(--text3);min-width:80px;letter-spacing:.5px;text-transform:uppercase;}
-.time-input{width:72px;padding:8px 10px;border:1px solid var(--border2);border-radius:var(--rsm);font-family:var(--mono);font-size:15px;font-weight:500;color:var(--text);background:var(--surface2);text-align:center;}
-.time-input:focus{outline:none;border-color:var(--accent);}
-.op-toggles,.diff-btns{display:flex;gap:5px;flex-wrap:wrap;}
-.op-btn,.diff-btn{font-family:var(--mono);font-size:13px;padding:5px 13px;border-radius:20px;border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;transition:all .18s;font-weight:500;}
-.op-btn.on,.diff-btn.on{background:var(--accent-soft);color:var(--accent-text);border-color:var(--accent);}
-[data-theme="dark"] .op-btn.on,[data-theme="dark"] .diff-btn.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent);}
+.btn.danger{background:var(--red-bg);color:var(--red);border-color:transparent;}
+[data-theme="dark"] .btn.danger{background:var(--red-dark);color:var(--red);}
+.btn:disabled{opacity:.35;cursor:not-allowed;transform:none;}
 
 /* GAME SCREEN */
-.game-screen{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 20px 20px;margin-bottom:12px;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;position:relative;box-shadow:var(--shadow);}
-.feedback-flash{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-family:var(--sans);font-size:12px;font-weight:600;padding:5px 16px;border-radius:20px;opacity:0;transition:opacity .15s;white-space:nowrap;pointer-events:none;}
+.game-screen{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px 20px 20px;margin-bottom:12px;min-height:210px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;position:relative;box-shadow:var(--shadow);}
+.feedback-flash{position:absolute;top:12px;left:50%;transform:translateX(-50%);font-family:var(--sans);font-size:12px;font-weight:600;padding:5px 16px;border-radius:20px;opacity:0;transition:opacity .15s;white-space:nowrap;pointer-events:none;}
 .feedback-flash.show{opacity:1;}
-.feedback-flash.ok{background:#d4f4e8;color:#1a6e4a;}
-.feedback-flash.err{background:#ffdce0;color:#9b1c2a;}
-[data-theme="dark"] .feedback-flash.ok{background:#0f2e22;color:#5ec893;}
-[data-theme="dark"] .feedback-flash.err{background:#2e0d12;color:#e07080;}
-
-.math-q-text{font-family:var(--mono);font-size:38px;font-weight:500;color:var(--text);letter-spacing:1px;min-height:52px;display:flex;align-items:center;justify-content:center;text-align:center;}
+.feedback-flash.ok{background:var(--green-bg);color:var(--green);}
+.feedback-flash.err{background:var(--red-bg);color:var(--red);}
+.math-q-text{font-family:var(--mono);font-size:36px;font-weight:500;color:var(--text);letter-spacing:1px;min-height:48px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.2;}
 .idle-msg{font-family:var(--mono);font-size:13px;color:var(--text3);letter-spacing:.5px;}
 .timer-wrap{width:100%;}
 .timer-bar-bg{width:100%;height:4px;background:var(--surface2);border-radius:4px;overflow:hidden;}
-.timer-bar-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .12s linear,background .3s;}
-.timer-text{font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:6px;text-align:right;}
-.screen-start-btn{font-family:var(--sans);font-size:14px;font-weight:600;padding:12px 32px;border-radius:var(--rsm);border:none;background:var(--accent);color:#fff;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:.2px;box-shadow:0 3px 12px rgba(79,110,247,0.3);}
+.timer-bar-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .1s linear,background .3s;}
+.timer-text{font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:5px;text-align:right;}
+.screen-start-btn{font-family:var(--sans);font-size:14px;font-weight:600;padding:11px 30px;border-radius:var(--rsm);border:none;background:var(--accent);color:#fff;cursor:pointer;transition:opacity .15s,transform .1s;box-shadow:0 3px 12px rgba(79,110,247,0.28);}
 .screen-start-btn:hover{opacity:.9;}.screen-start-btn:active{transform:scale(.97);}
 
-/* ANS INPUT */
-.ans-input-row{display:flex;gap:8px;margin-bottom:12px;align-items:stretch;}
-.math-ans-input{flex:1;font-family:var(--mono);font-size:22px;font-weight:500;text-align:center;padding:12px;border:1.5px solid var(--border2);border-radius:var(--rsm);background:var(--surface);color:var(--text);transition:border-color .15s,box-shadow .15s;box-shadow:var(--shadow);}
+/* ANS INPUT ROW (числовой штурм) */
+.ans-input-row{display:flex;gap:6px;margin-bottom:12px;align-items:stretch;}
+.math-ans-input{flex:1;font-family:var(--mono);font-size:22px;font-weight:500;text-align:center;padding:11px;border:1.5px solid var(--border2);border-radius:var(--rsm);background:var(--surface);color:var(--text);transition:border-color .15s,box-shadow .15s;box-shadow:var(--shadow);}
 .math-ans-input:focus{outline:none;border-color:var(--accent);}
 .math-ans-input:disabled{opacity:.35;}
-.math-ans-input.debouncing{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,110,247,0.15);}
+.math-ans-input.debouncing{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,110,247,0.14);}
+.sign-btn{font-family:var(--mono);font-size:20px;font-weight:500;padding:0 14px;border-radius:var(--rsm);border:1.5px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;transition:all .15s;min-width:48px;}
+.sign-btn:hover{border-color:var(--accent);color:var(--accent);}
+.sign-btn:disabled{opacity:.35;cursor:not-allowed;}
 #submitBtn{position:relative;overflow:hidden;}
 #submitBtn .btn-ring{position:absolute;inset:0;border-radius:var(--rsm);background:rgba(255,255,255,0.18);transform:scaleX(0);transform-origin:left;transition:none;pointer-events:none;}
 #submitBtn.counting .btn-ring{transform:scaleX(1);transition:transform var(--debounce-ms,600ms) linear;}
 
-/* STATS */
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:14px 8px;text-align:center;box-shadow:var(--shadow);}
-.stat-val{font-family:var(--mono);font-size:28px;font-weight:500;color:var(--text);line-height:1;}
-.stat-lbl{font-size:10px;color:var(--text3);margin-top:4px;letter-spacing:.5px;text-transform:uppercase;}
-.stat-card.s-right .stat-val{color:#1a6e4a;}
-.stat-card.s-wrong .stat-val{color:#9b1c2a;}
-[data-theme="dark"] .stat-card.s-right .stat-val{color:#5ec893;}
-[data-theme="dark"] .stat-card.s-wrong .stat-val{color:#e07080;}
+/* STATS SESSION */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 8px;text-align:center;box-shadow:var(--shadow);}
+.stat-val{font-family:var(--mono);font-size:26px;font-weight:500;color:var(--text);line-height:1;}
+.stat-lbl{font-size:10px;color:var(--text3);margin-top:4px;letter-spacing:.4px;text-transform:uppercase;}
+.stat-card.s-right .stat-val{color:var(--green);}
+.stat-card.s-wrong .stat-val{color:var(--red);}
 
-/* RESULT */
-.result-card{border-radius:var(--radius);padding:32px 20px 28px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;width:100%;}
+/* RESULT CARD */
+.result-card{border-radius:var(--radius);padding:28px 20px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:5px;width:100%;}
 .result-card.grade-green{background:#edf8f2;border:1px solid #a8dfc0;}
 .result-card.grade-amber{background:#fffaec;border:1px solid #f0d878;}
 .result-card.grade-red{background:#fff0f1;border:1px solid #f0a8ad;}
@@ -138,52 +158,81 @@ h1 span{color:var(--accent);}
 [data-theme="dark"] .result-card.grade-amber{background:#1e1900;border-color:#4a3c00;}
 [data-theme="dark"] .result-card.grade-red{background:#200a0c;border-color:#501820;}
 .result-label{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;}
-.grade-green .result-label{color:#1a6e4a;}.grade-amber .result-label{color:#8a5800;}.grade-red .result-label{color:#9b1c2a;}
-[data-theme="dark"] .grade-green .result-label{color:#5ec893;}[data-theme="dark"] .grade-amber .result-label{color:#d4a030;}[data-theme="dark"] .grade-red .result-label{color:#e07080;}
-.result-score{font-family:var(--mono);font-size:56px;font-weight:500;line-height:1;margin:6px 0;}
+.grade-green .result-label{color:var(--green);}.grade-amber .result-label{color:var(--amber);}.grade-red .result-label{color:var(--red);}
+.result-score{font-family:var(--mono);font-size:52px;font-weight:500;line-height:1;margin:5px 0;}
 .grade-green .result-score{color:#145c38;}.grade-amber .result-score{color:#704800;}.grade-red .result-score{color:#801520;}
 [data-theme="dark"] .grade-green .result-score{color:#7dd4a0;}[data-theme="dark"] .grade-amber .result-score{color:#d8b060;}[data-theme="dark"] .grade-red .result-score{color:#d08080;}
-.result-sub{font-size:13px;color:var(--text2);font-family:var(--mono);}
-.result-phrase{font-size:14px;font-weight:500;margin-top:8px;padding:8px 20px;border-radius:20px;}
+.result-sub{font-size:12px;color:var(--text2);font-family:var(--mono);}
+.result-phrase{font-size:13px;font-weight:500;margin-top:8px;padding:7px 18px;border-radius:20px;}
 .grade-green .result-phrase{background:#c8f0d8;color:#145c38;}.grade-amber .result-phrase{background:#fde8a0;color:#704800;}.grade-red .result-phrase{background:#fcc8cc;color:#801520;}
 [data-theme="dark"] .grade-green .result-phrase{background:#1a3828;color:#7dd4a0;}[data-theme="dark"] .grade-amber .result-phrase{background:#2e2200;color:#d8b060;}[data-theme="dark"] .grade-red .result-phrase{background:#2e1018;color:#d08080;}
 
 /* N-BACK */
-.nback-display{font-family:var(--mono);font-size:80px;font-weight:500;color:var(--text);line-height:1;min-height:100px;display:flex;align-items:center;justify-content:center;transition:opacity .08s;}
+.nback-display{font-family:var(--mono);font-size:76px;font-weight:500;color:var(--text);line-height:1;min-height:90px;display:flex;align-items:center;justify-content:center;transition:opacity .08s;}
 .nback-display.flash{opacity:0;}
-.nback-sublabel{font-family:var(--mono);font-size:12px;color:var(--text3);letter-spacing:.5px;text-align:center;}
-.nback-btn-row{display:flex;gap:12px;}
-.nback-btn{font-family:var(--sans);font-size:14px;font-weight:600;padding:12px 28px;border-radius:var(--rsm);border:none;cursor:pointer;transition:all .15s;}
-.nback-btn.yes{background:#d4f4e8;color:#1a6e4a;}[data-theme="dark"] .nback-btn.yes{background:#0f2e22;color:#5ec893;}
+.nback-sublabel{font-family:var(--mono);font-size:12px;color:var(--text3);letter-spacing:.4px;text-align:center;}
+.nback-btn-row{display:flex;gap:10px;}
+.nback-btn{font-family:var(--sans);font-size:13px;font-weight:600;padding:11px 26px;border-radius:var(--rsm);border:none;cursor:pointer;transition:all .15s;}
+.nback-btn.yes{background:var(--green-bg);color:var(--green);}
 .nback-btn.no{background:var(--surface2);color:var(--text2);}
 .nback-btn:disabled{opacity:.3;cursor:not-allowed;}
-.nback-history{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;min-height:20px;}
-.nback-dot{width:8px;height:8px;border-radius:50%;background:var(--surface3);}
-.nback-dot.ok{background:#1a6e4a;}[data-theme="dark"] .nback-dot.ok{background:#5ec893;}
-.nback-dot.err{background:#9b1c2a;}[data-theme="dark"] .nback-dot.err{background:#e07080;}
+.nback-history{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;min-height:18px;}
+.nback-dot{width:7px;height:7px;border-radius:50%;background:var(--surface3);}
+.nback-dot.ok{background:var(--green);}
+.nback-dot.err{background:var(--red);}
 
 /* REVERSE SPAN */
-.span-seq-display{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;min-height:64px;align-items:center;}
-.span-digit{font-family:var(--mono);font-size:44px;font-weight:500;color:var(--text);opacity:0;transition:opacity .12s;}
+.span-seq-display{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;min-height:62px;align-items:center;}
+.span-digit{font-family:var(--mono);font-size:42px;font-weight:500;color:var(--text);opacity:0;transition:opacity .12s;}
 .span-digit.visible{opacity:1;}
-.span-input-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;align-items:center;}
-.span-cell{width:54px;height:62px;font-family:var(--mono);font-size:26px;font-weight:500;text-align:center;border:1.5px solid var(--border2);border-radius:var(--rsm);background:var(--surface);color:var(--text);transition:border-color .2s;}
+.span-input-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;align-items:center;}
+.span-cell{width:52px;height:58px;font-family:var(--mono);font-size:24px;font-weight:500;text-align:center;border:1.5px solid var(--border2);border-radius:var(--rsm);background:var(--surface);color:var(--text);transition:border-color .2s;}
 .span-cell:focus{outline:none;border-color:var(--accent);}
-.span-cell.correct{border-color:#1a6e4a;background:#edf8f2;}
-.span-cell.wrong{border-color:#9b1c2a;background:#fff0f1;}
-[data-theme="dark"] .span-cell.correct{background:#0d2018;border-color:#5ec893;}
-[data-theme="dark"] .span-cell.wrong{background:#200a0c;border-color:#e07080;}
-.span-level{font-family:var(--mono);font-size:12px;color:var(--text3);letter-spacing:.3px;}
+.span-cell.correct{border-color:var(--green);background:var(--green-bg);}
+.span-cell.wrong{border-color:var(--red);background:var(--red-bg);}
+.span-level{font-family:var(--mono);font-size:12px;color:var(--text3);}
 
 /* CHAINS */
-.chain-display{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;min-height:60px;}
+.chain-display{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;min-height:56px;}
 .chain-num{font-family:var(--mono);font-size:26px;font-weight:500;color:var(--text);}
 .chain-op{font-family:var(--mono);font-size:22px;color:var(--text3);}
-.chain-ans-input{width:110px;font-family:var(--mono);font-size:24px;font-weight:500;text-align:center;padding:10px;border:1.5px solid var(--border2);border-radius:var(--rsm);background:var(--surface);color:var(--text);transition:border-color .15s,box-shadow .15s;}
+.chain-ans-wrap{display:flex;gap:6px;align-items:center;}
+.chain-ans-input{width:110px;font-family:var(--mono);font-size:22px;font-weight:500;text-align:center;padding:10px;border:1.5px solid var(--border2);border-radius:var(--rsm);background:var(--surface);color:var(--text);transition:border-color .15s,box-shadow .15s;}
 .chain-ans-input:focus{outline:none;border-color:var(--accent);}
 .chain-ans-input:disabled{opacity:.35;}
-.chain-ans-input.debouncing{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,110,247,0.15);}
-.chain-meta{font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.3px;}
+.chain-ans-input.debouncing{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,110,247,0.14);}
+.chain-meta{font-family:var(--mono);font-size:11px;color:var(--text3);}
+
+/* ════ STATISTICS PAGE ════ */
+.stat-page-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:16px;letter-spacing:-.2px;}
+.stat-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);}
+.stat-section-title{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:.6px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.stat-section-title .ex-icon{font-size:14px;}
+.stat-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);}
+.stat-row:last-child{border-bottom:none;padding-bottom:0;}
+.stat-row-label{font-size:12px;color:var(--text2);}
+.stat-row-val{font-family:var(--mono);font-size:13px;font-weight:500;color:var(--text);}
+.stat-row-val.good{color:var(--green);}
+.stat-row-val.bad{color:var(--red);}
+.progress-bar-wrap{margin-top:10px;}
+.progress-bar-label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:4px;}
+.progress-bar-bg{height:6px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.progress-bar-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .5s ease;}
+.trend-badge{display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:20px;font-weight:500;}
+.trend-up{background:var(--green-bg);color:var(--green);}
+.trend-down{background:var(--red-bg);color:var(--red);}
+.trend-same{background:var(--surface2);color:var(--text3);}
+.no-data-msg{font-family:var(--mono);font-size:12px;color:var(--text3);text-align:center;padding:20px 0;}
+.overall-score{display:flex;align-items:center;justify-content:space-between;padding:16px;background:var(--accent-soft);border-radius:var(--rsm);margin-bottom:14px;}
+.overall-score-label{font-size:12px;color:var(--accent-text);font-weight:500;}
+.overall-score-val{font-family:var(--mono);font-size:28px;font-weight:500;color:var(--accent);}
+[data-theme="dark"] .overall-score{background:var(--accent-soft);}
+[data-theme="dark"] .overall-score-label{color:var(--accent);}
+[data-theme="dark"] .overall-score-val{color:var(--accent);}
+.clear-stats-btn{width:100%;margin-top:4px;}
+.sessions-chart{display:flex;align-items:flex-end;gap:3px;height:48px;margin-top:8px;}
+.sessions-bar{flex:1;min-width:6px;border-radius:3px 3px 0 0;background:var(--accent);opacity:.5;transition:opacity .2s;cursor:default;}
+.sessions-bar:hover{opacity:1;}
 </style>
 </head>
 <body>
@@ -191,70 +240,95 @@ h1 span{color:var(--accent);}
   <div class="top-bar">
     <h1>тренажёр <span>мозга</span></h1>
     <button class="theme-btn" onclick="toggleTheme()">
-      <span id="themeIcon">☽</span>
-      <span id="themeLabel">тёмная</span>
+      <span id="themeIcon">☽</span><span id="themeLabel">тёмная</span>
     </button>
   </div>
 
   <div class="tabs">
-    <button class="tab active" onclick="showTab('t1',this)">Плюс N</button>
-    <button class="tab" onclick="showTab('t2',this)">Числовой штурм</button>
-    <button class="tab" onclick="showTab('t3',this)">Обратный порядок</button>
+    <button class="tab active" onclick="showTab('t0',this)">📊 Итоги</button>
+    <button class="tab" onclick="showTab('t1',this)">Плюс N</button>
+    <button class="tab" onclick="showTab('t2',this)">Штурм</button>
+    <button class="tab" onclick="showTab('t3',this)">Обратный</button>
     <button class="tab" onclick="showTab('t4',this)">N-back</button>
     <button class="tab" onclick="showTab('t5',this)">Цепочки</button>
   </div>
 
+  <!-- ══ СТАТИСТИКА ══ -->
+  <div id="t0" class="pane active">
+    <div id="statsPage"></div>
+  </div>
+
   <!-- ══ ПЛЮС N ══ -->
-  <div id="t1" class="pane active">
+  <div id="t1" class="pane">
+    <div class="desc-block" id="desc1">
+      <div class="desc-header" onclick="toggleDesc('desc1')">
+        <div class="desc-title"><span class="desc-icon">➕</span>Как играть</div>
+        <span class="desc-chevron">▾</span>
+      </div>
+      <div class="desc-body">
+        <p>Показывается четырёхзначное число. Нужно мысленно прибавить <strong>1, 2, 3, 4 и 5</strong> к каждой цифре по отдельности (по модулю 10, то есть 9+1=0).</p>
+        <p>Нажми на главную карточку чтобы скрыть/показать число. Нажми на карточку с ответом чтобы проверить себя.</p>
+      </div>
+    </div>
     <div class="main-flip">
       <div class="flip-wrap">
         <div class="flip-inner" id="mainInner" onclick="flipMain()">
-          <div class="flip-front">
-            <span class="main-digits" id="mainDigits">????</span>
-          </div>
-          <div class="flip-back">
-            <div class="reveal-hint">
-              <span class="eye-icon">👁</span>
-              <span class="eye-label">раскрыть</span>
-            </div>
-          </div>
+          <div class="flip-front"><span class="main-digits" id="mainDigits">????</span></div>
+          <div class="flip-back"><div class="reveal-hint"><span class="eye-icon">👁</span><span class="eye-label">раскрыть</span></div></div>
         </div>
       </div>
     </div>
     <div class="ans-grid" id="ansGrid"></div>
     <div class="btn-row">
       <button class="btn primary" onclick="newCard()">Новая карточка</button>
-      <button class="btn" onclick="hideAllAns()">Скрыть все ответы</button>
+      <button class="btn" onclick="hideAllAns()">Скрыть ответы</button>
     </div>
   </div>
 
   <!-- ══ ЧИСЛОВОЙ ШТУРМ ══ -->
   <div id="t2" class="pane">
+    <div class="desc-block" id="desc2">
+      <div class="desc-header" onclick="toggleDesc('desc2')">
+        <div class="desc-title"><span class="desc-icon">⚡</span>Как играть</div>
+        <span class="desc-chevron">▾</span>
+      </div>
+      <div class="desc-body">
+        <p>Решай арифметические примеры как можно быстрее. Ответ принимается автоматически через <strong>600 мс</strong> после ввода последней цифры — нажимать ОК не нужно.</p>
+        <p>На телефоне для ввода отрицательного ответа нажми кнопку <strong>±</strong> слева от поля — она добавит или уберёт минус.</p>
+        <p><strong>Тренирует:</strong> скорость арифметики, рабочую память, концентрацию под давлением времени.</p>
+      </div>
+    </div>
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-val" id="sTotal">0</div><div class="stat-lbl">всего</div></div>
       <div class="stat-card s-right"><div class="stat-val" id="sRight">0</div><div class="stat-lbl">верно</div></div>
       <div class="stat-card s-wrong"><div class="stat-val" id="sWrong">0</div><div class="stat-lbl">ошибок</div></div>
     </div>
-    <div class="settings-panel">
-      <div class="settings-row">
-        <span class="settings-label">Время (сек)</span>
-        <input type="number" class="time-input" id="timeSec" value="60" min="10" max="600" step="5">
+    <div class="settings-panel" id="msSettings">
+      <div class="settings-header" onclick="toggleSettings('msSettings')">
+        <div class="settings-title">⚙ Настройки</div>
+        <span class="settings-chevron">▾</span>
       </div>
-      <div class="settings-row">
-        <span class="settings-label">Сложность</span>
-        <div class="diff-btns">
-          <button class="diff-btn" data-diff="easy" onclick="setDiff(this)">лёгко</button>
-          <button class="diff-btn on" data-diff="medium" onclick="setDiff(this)">средне</button>
-          <button class="diff-btn" data-diff="hard" onclick="setDiff(this)">сложно</button>
+      <div class="settings-body">
+        <div class="settings-row">
+          <span class="settings-label">Время (сек)</span>
+          <input type="number" class="time-input" id="timeSec" value="60" min="10" max="600" step="5">
         </div>
-      </div>
-      <div class="settings-row">
-        <span class="settings-label">Операции</span>
-        <div class="op-toggles">
-          <button class="op-btn on" data-op="+" onclick="toggleOp(this)">+</button>
-          <button class="op-btn on" data-op="-" onclick="toggleOp(this)">−</button>
-          <button class="op-btn on" data-op="×" onclick="toggleOp(this)">×</button>
-          <button class="op-btn on" data-op="÷" onclick="toggleOp(this)">÷</button>
+        <div class="settings-row">
+          <span class="settings-label">Сложность</span>
+          <div class="diff-btns">
+            <button class="diff-btn" data-diff="easy" onclick="setDiff(this)">лёгко</button>
+            <button class="diff-btn on" data-diff="medium" onclick="setDiff(this)">средне</button>
+            <button class="diff-btn" data-diff="hard" onclick="setDiff(this)">сложно</button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Операции</span>
+          <div class="op-toggles">
+            <button class="op-btn on" data-op="+" onclick="toggleOp(this)">+</button>
+            <button class="op-btn on" data-op="-" onclick="toggleOp(this)">−</button>
+            <button class="op-btn on" data-op="×" onclick="toggleOp(this)">×</button>
+            <button class="op-btn on" data-op="÷" onclick="toggleOp(this)">÷</button>
+          </div>
         </div>
       </div>
     </div>
@@ -268,7 +342,8 @@ h1 span{color:var(--accent);}
       <button class="screen-start-btn" id="screenStartBtn" onclick="toggleSession()">Старт</button>
     </div>
     <div class="ans-input-row">
-      <input type="text" inputmode="numeric" pattern="-?[0-9]*" class="math-ans-input" id="mathInput" placeholder="ответ" disabled autocomplete="off">
+      <button class="sign-btn" id="signBtn" onclick="toggleSign()" disabled title="сменить знак">±</button>
+      <input type="text" inputmode="numeric" pattern="[0-9]*" class="math-ans-input" id="mathInput" placeholder="ответ" disabled autocomplete="off">
       <button class="btn primary" id="submitBtn" onclick="submitAns()" disabled><span class="btn-ring"></span>ОК</button>
     </div>
     <div class="btn-row"><button class="btn" onclick="resetSession()">Сбросить</button></div>
@@ -276,6 +351,22 @@ h1 span{color:var(--accent);}
 
   <!-- ══ ОБРАТНЫЙ ПОРЯДОК ══ -->
   <div id="t3" class="pane">
+    <div class="desc-block" id="desc3">
+      <div class="desc-header" onclick="toggleDesc('desc3')">
+        <div class="desc-title"><span class="desc-icon">🔁</span>Как играть</div>
+        <span class="desc-chevron">▾</span>
+      </div>
+      <div class="desc-body">
+        <p>Цифры показываются по одной. Запомни их и введи в <strong>обратном порядке</strong>.</p>
+        <ol class="desc-steps">
+          <li>Смотри на цифры — они мелькают одна за другой</li>
+          <li>Когда все показаны — введи их задом наперёд</li>
+          <li>Правильный ответ → уровень растёт (больше цифр)</li>
+          <li>Ошибка → уровень снижается</li>
+        </ol>
+        <p><strong>Тренирует:</strong> объём рабочей памяти. Обратный вариант сложнее прямого — требует активной манипуляции с информацией, а не просто её удержания.</p>
+      </div>
+    </div>
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-val" id="rsTotal">0</div><div class="stat-lbl">всего</div></div>
       <div class="stat-card s-right"><div class="stat-val" id="rsRight">0</div><div class="stat-lbl">верно</div></div>
@@ -286,25 +377,50 @@ h1 span{color:var(--accent);}
       <div class="span-level" id="rsLevelLbl">уровень — 3 цифры</div>
       <div class="span-seq-display" id="rsSeqDisplay"><span class="idle-msg">нажмите «Старт»</span></div>
       <div class="span-input-row" id="rsInputRow" style="display:none"></div>
-      <button class="screen-start-btn" id="rsStartBtn" onclick="rsBegin()">Старт</button>
+      <div style="display:flex;gap:8px;">
+        <button class="screen-start-btn" id="rsStartBtn" onclick="rsBegin()">Старт</button>
+        <button class="btn danger" id="rsStopBtn" onclick="rsStop()" style="display:none">Стоп</button>
+      </div>
     </div>
     <div class="btn-row"><button class="btn" onclick="rsReset()">Сбросить</button></div>
   </div>
 
   <!-- ══ N-BACK ══ -->
   <div id="t4" class="pane">
+    <div class="desc-block" id="desc4">
+      <div class="desc-header" onclick="toggleDesc('desc4')">
+        <div class="desc-title"><span class="desc-icon">🔢</span>Как играть</div>
+        <span class="desc-chevron">▾</span>
+      </div>
+      <div class="desc-body">
+        <p>Каждые 2.5 секунды появляется новая цифра. Нажми <strong>«Совпадает!»</strong> если текущая цифра совпадает с той, что была ровно <strong>N шагов назад</strong>.</p>
+        <ol class="desc-steps">
+          <li>Первые N цифр — просто запоминай, кнопки заблокированы</li>
+          <li>Когда появляется новая цифра — сравни её с той, что была N шагов назад</li>
+          <li>Совпадает → жми «Совпадает!»; не совпадает → ничего не делай (или «Нет»)</li>
+        </ol>
+        <p><strong>Пример (2-back):</strong> 7 → 3 → <strong>7</strong> ← совпадает с шагом 1! → 5 → <strong>3</strong> ← совпадает с шагом 2!</p>
+        <p><strong>Тренирует:</strong> рабочую память, способность одновременно удерживать и обновлять информацию.</p>
+      </div>
+    </div>
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-val" id="nbTotal">0</div><div class="stat-lbl">раундов</div></div>
       <div class="stat-card s-right"><div class="stat-val" id="nbRight">0</div><div class="stat-lbl">верно</div></div>
       <div class="stat-card s-wrong"><div class="stat-val" id="nbWrong">0</div><div class="stat-lbl">ошибок</div></div>
     </div>
-    <div class="settings-panel">
-      <div class="settings-row">
-        <span class="settings-label">N =</span>
-        <div class="diff-btns">
-          <button class="diff-btn" data-n="1" onclick="setNB(this)">1-back</button>
-          <button class="diff-btn on" data-n="2" onclick="setNB(this)">2-back</button>
-          <button class="diff-btn" data-n="3" onclick="setNB(this)">3-back</button>
+    <div class="settings-panel" id="nbSettings">
+      <div class="settings-header" onclick="toggleSettings('nbSettings')">
+        <div class="settings-title">⚙ Настройки</div>
+        <span class="settings-chevron">▾</span>
+      </div>
+      <div class="settings-body">
+        <div class="settings-row">
+          <span class="settings-label">N =</span>
+          <div class="diff-btns">
+            <button class="diff-btn" data-n="1" onclick="setNB(this)">1-back</button>
+            <button class="diff-btn on" data-n="2" onclick="setNB(this)">2-back</button>
+            <button class="diff-btn" data-n="3" onclick="setNB(this)">3-back</button>
+          </div>
         </div>
       </div>
     </div>
@@ -324,26 +440,43 @@ h1 span{color:var(--accent);}
 
   <!-- ══ ЦЕПОЧКИ ══ -->
   <div id="t5" class="pane">
+    <div class="desc-block" id="desc5">
+      <div class="desc-header" onclick="toggleDesc('desc5')">
+        <div class="desc-title"><span class="desc-icon">🔗</span>Как играть</div>
+        <span class="desc-chevron">▾</span>
+      </div>
+      <div class="desc-body">
+        <p>Показывается цепочка вычислений, например: <strong>3 × 4 − 7 ÷ 2</strong>. Нужно посчитать результат в уме — шаг за шагом, без записи.</p>
+        <p>Ответ принимается автоматически через 700 мс. Деление всегда даёт целое число.</p>
+        <p><strong>Тренирует:</strong> последовательную рабочую память — нужно удерживать промежуточный результат, применяя следующую операцию.</p>
+      </div>
+    </div>
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-val" id="chTotal">0</div><div class="stat-lbl">всего</div></div>
       <div class="stat-card s-right"><div class="stat-val" id="chRight">0</div><div class="stat-lbl">верно</div></div>
       <div class="stat-card s-wrong"><div class="stat-val" id="chWrong">0</div><div class="stat-lbl">ошибок</div></div>
     </div>
-    <div class="settings-panel">
-      <div class="settings-row">
-        <span class="settings-label">Сложность</span>
-        <div class="diff-btns">
-          <button class="diff-btn on" data-chdiff="easy" onclick="setChDiff(this)">лёгко</button>
-          <button class="diff-btn" data-chdiff="medium" onclick="setChDiff(this)">средне</button>
-          <button class="diff-btn" data-chdiff="hard" onclick="setChDiff(this)">сложно</button>
-        </div>
+    <div class="settings-panel" id="chSettings">
+      <div class="settings-header" onclick="toggleSettings('chSettings')">
+        <div class="settings-title">⚙ Настройки</div>
+        <span class="settings-chevron">▾</span>
       </div>
-      <div class="settings-row">
-        <span class="settings-label">Шагов</span>
-        <div class="diff-btns">
-          <button class="diff-btn" data-steps="3" onclick="setChSteps(this)">3</button>
-          <button class="diff-btn on" data-steps="4" onclick="setChSteps(this)">4</button>
-          <button class="diff-btn" data-steps="5" onclick="setChSteps(this)">5</button>
+      <div class="settings-body">
+        <div class="settings-row">
+          <span class="settings-label">Сложность</span>
+          <div class="diff-btns">
+            <button class="diff-btn on" data-chdiff="easy" onclick="setChDiff(this)">лёгко</button>
+            <button class="diff-btn" data-chdiff="medium" onclick="setChDiff(this)">средне</button>
+            <button class="diff-btn" data-chdiff="hard" onclick="setChDiff(this)">сложно</button>
+          </div>
+        </div>
+        <div class="settings-row">
+          <span class="settings-label">Шагов</span>
+          <div class="diff-btns">
+            <button class="diff-btn" data-steps="3" onclick="setChSteps(this)">3</button>
+            <button class="diff-btn on" data-steps="4" onclick="setChSteps(this)">4</button>
+            <button class="diff-btn" data-steps="5" onclick="setChSteps(this)">5</button>
+          </div>
         </div>
       </div>
     </div>
@@ -351,28 +484,70 @@ h1 span{color:var(--accent);}
       <div class="feedback-flash" id="chFeedback"></div>
       <div class="chain-meta" id="chMeta"></div>
       <div class="chain-display" id="chDisplay"><span class="idle-msg">нажмите «Старт»</span></div>
-      <input type="text" inputmode="numeric" pattern="-?[0-9]*" class="chain-ans-input" id="chInput" placeholder="= ?" disabled autocomplete="off">
-      <button class="screen-start-btn" id="chStartBtn" onclick="chBegin()">Старт</button>
+      <div class="chain-ans-wrap">
+        <input type="text" inputmode="numeric" pattern="[0-9]*" class="chain-ans-input" id="chInput" placeholder="= ?" disabled autocomplete="off">
+        <button class="sign-btn" id="chSignBtn" onclick="toggleChSign()" disabled title="сменить знак">±</button>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="screen-start-btn" id="chStartBtn" onclick="chBegin()">Старт</button>
+        <button class="btn danger" id="chStopBtn" onclick="chStop()" style="display:none">Стоп</button>
+      </div>
     </div>
     <div class="btn-row"><button class="btn" onclick="chReset()">Сбросить</button></div>
   </div>
 </div>
 
 <script>
-/* ── THEME & TABS ── */
+/* ══════════════════════════════
+   GLOBALS & STORAGE
+══════════════════════════════ */
+// sessionStorage — сбрасывается при перезагрузке
+const SS = {
+  get(k){try{return JSON.parse(sessionStorage.getItem(k));}catch{return null;}},
+  set(k,v){sessionStorage.setItem(k,JSON.stringify(v));}
+};
+
+// Глобальные накопленные данные сессии (для страницы статистики)
+// Структура: {ms:[{total,right,wrong,pct,ts}], rs:[{maxLevel,total,right,ts}], nb:[{total,right,wrong,pct,ts}], ch:[{total,right,wrong,pct,ts}]}
+function getStat(){return SS.get('globalStat')||{ms:[],rs:[],nb:[],ch:[]};}
+function saveStat(s){SS.set('globalStat',s);}
+function pushStat(key,entry){const s=getStat();s[key].push({...entry,ts:Date.now()});saveStat(s);}
+
+/* ══════════════════════════════
+   THEME & TABS
+══════════════════════════════ */
 function toggleTheme(){
   const h=document.documentElement,dark=h.getAttribute('data-theme')==='dark';
   h.setAttribute('data-theme',dark?'light':'dark');
   document.getElementById('themeIcon').textContent=dark?'☽':'☀';
   document.getElementById('themeLabel').textContent=dark?'тёмная':'светлая';
 }
+
+// Стоп-функции каждого упражнения — вызываются при переключении вкладки
+const stoppers={
+  t2:()=>{if(msRunning)resetSession();},
+  t3:()=>{rsStop();},
+  t4:()=>{if(nbRunning)nbStop();},
+  t5:()=>{chStop();}
+};
+
 function showTab(id,btn){
+  // Останавливаем текущее активное упражнение
+  const cur=document.querySelector('.pane.active');
+  if(cur&&cur.id!==id&&stoppers[cur.id])stoppers[cur.id]();
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById(id).classList.add('active');btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='t0')renderStatsPage();
 }
 
-/* ── PLUS N ── */
+function toggleDesc(id){document.getElementById(id).classList.toggle('open');}
+function toggleSettings(id){document.getElementById(id).classList.toggle('open');}
+
+/* ══════════════════════════════
+   PLUS N
+══════════════════════════════ */
 const plusLabels=[{cls:'p1',txt:'+1'},{cls:'p2',txt:'+2'},{cls:'p3',txt:'+3'},{cls:'p4',txt:'+4'},{cls:'p5',txt:'+5'}];
 let curDigits=[];
 function ri(n){return Math.floor(Math.random()*n);}
@@ -400,7 +575,9 @@ function flipAns(n){document.getElementById('af'+n).classList.toggle('flipped');
 function hideAllAns(){for(let n=1;n<=5;n++){const e=document.getElementById('af'+n);if(e)e.classList.remove('flipped');}}
 newCard();
 
-/* ── SHARED ── */
+/* ══════════════════════════════
+   SHARED HELPERS
+══════════════════════════════ */
 function flash(id,ok,correct){
   const el=document.getElementById(id);if(!el)return;
   clearTimeout(el._t);
@@ -409,13 +586,15 @@ function flash(id,ok,correct){
   el.classList.add('show');
   el._t=setTimeout(()=>el.classList.remove('show'),1000);
 }
+function gradeOf(pct){return pct>=0.8?'grade-green':pct>=0.5?'grade-amber':'grade-red';}
+function phrasesFor(pct){
+  if(pct>=0.8)return['Отличная работа!','Мозг в топ-форме!','Блестяще!','Огонь!'];
+  if(pct>=0.5)return['Хороший старт!','Почти! Ещё немного.','Прогресс есть.'];
+  return['Не сдавайся!','Мозгу нужна разминка.','Ошибки — это тренировка!'];
+}
 function showResult(screenId,right,total,wrong,sub,restartFn){
-  const pct=total>0?right/total:0;
-  let g,phrases;
-  if(pct>=0.8){g='grade-green';phrases=['Отличная работа!','Мозг в топ-форме!','Блестяще!','Огонь!'];}
-  else if(pct>=0.5){g='grade-amber';phrases=['Хороший старт!','Почти! Ещё немного.','Прогресс есть.'];}
-  else{g='grade-red';phrases=['Не сдавайся!','Мозгу нужна разминка.','Ошибки — это тренировка!'];}
-  const phrase=phrases[ri(phrases.length)];
+  const pct=total>0?right/total:0,g=gradeOf(pct);
+  const phrase=phrasesFor(pct)[ri(phrasesFor(pct).length)];
   document.getElementById(screenId).innerHTML=`
     <div class="result-card ${g}">
       <div class="result-label">верно</div>
@@ -426,28 +605,47 @@ function showResult(screenId,right,total,wrong,sub,restartFn){
     <button class="screen-start-btn" onclick="${restartFn}()" style="margin-top:8px">Ещё раз</button>`;
 }
 
-/* ── ЧИСЛОВОЙ ШТУРМ ── */
+/* ══════════════════════════════
+   ЧИСЛОВОЙ ШТУРМ
+══════════════════════════════ */
 let msRunning=false,msTimer=null,msLeft=0,msTotal_t=0;
-let msT=0,msR=0,msW=0,msAns=0,msDiff='medium',msFbT=null;
+let msT=0,msR=0,msW=0,msAns=0,msDiff='medium';
 let msDebT=null;const MS_DB=600;
+let msNeg=false; // is current input negative
 
 function setDiff(btn){document.querySelectorAll('.diff-btn[data-diff]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');msDiff=btn.dataset.diff;}
 function toggleOp(btn){const ons=document.querySelectorAll('.op-btn.on');if(btn.classList.contains('on')&&ons.length<=1)return;btn.classList.toggle('on');}
 function activeOps(){return[...document.querySelectorAll('.op-btn.on')].map(b=>b.dataset.op);}
 
+function toggleSign(){
+  const inp=document.getElementById('mathInput');
+  msNeg=!msNeg;
+  const digits=inp.value.replace('-','');
+  inp.value=msNeg&&digits?'-'+digits:digits;
+  if(msRunning&&inp.value&&inp.value!=='-')triggerMsDebounce(inp);
+}
 function onMsInput(e){
-  let v=e.target.value.replace(/[^0-9\-]/g,'').replace(/(?!^)-/g,'');e.target.value=v;
-  clearTimeout(msDebT);const btn=document.getElementById('submitBtn');
-  if(!msRunning||v===''||v==='-'){e.target.classList.remove('debouncing');btn.classList.remove('counting');return;}
-  e.target.classList.add('debouncing');btn.classList.remove('counting');
-  btn.style.setProperty('--debounce-ms',MS_DB+'ms');void btn.offsetWidth;btn.classList.add('counting');
-  msDebT=setTimeout(()=>{e.target.classList.remove('debouncing');btn.classList.remove('counting');submitAns();},MS_DB);
+  let v=e.target.value.replace(/[^0-9]/g,'');
+  msNeg=msNeg&&v!=='';
+  e.target.value=msNeg?'-'+v:v;
+  triggerMsDebounce(e.target);
+}
+function triggerMsDebounce(inp){
+  clearTimeout(msDebT);
+  const btn=document.getElementById('submitBtn');
+  const v=inp.value;
+  if(!msRunning||v===''||v==='-'){inp.classList.remove('debouncing');btn.classList.remove('counting');return;}
+  inp.classList.add('debouncing');btn.classList.remove('counting');
+  btn.style.setProperty('--debounce-ms',MS_DB+'ms');
+  void btn.offsetWidth;btn.classList.add('counting');
+  msDebT=setTimeout(()=>{inp.classList.remove('debouncing');btn.classList.remove('counting');submitAns();},MS_DB);
 }
 function cancelMsDb(){
   clearTimeout(msDebT);
   const i=document.getElementById('mathInput'),b=document.getElementById('submitBtn');
   if(i)i.classList.remove('debouncing');if(b)b.classList.remove('counting');
 }
+
 function genQ(){
   const ops=activeOps(),op=ops[ri(ops.length)];
   let a,b,ans,qs;const d=msDiff;
@@ -457,15 +655,17 @@ function genQ(){
   else{const divs=d==='easy'?[2,3,4,5]:[2,3,4,5,6,7,8,9,10,11,12];b=divs[ri(divs.length)];const m=d==='easy'?10:d==='medium'?20:50,neg=d==='hard';ans=neg?rndSigned(m):ri(m);a=ans*b;qs=`${a} ÷ ${b}`;}
   return{qs,ans};
 }
-function toggleSession(){msRunning?endSession():startSession();}
+
+function toggleSession(){msRunning?resetSession():startSession();}
 function startSession(){
-  msT=0;msR=0;msW=0;msUpdateStats();
+  msT=0;msR=0;msW=0;msNeg=false;msUpdateStats();
   msLeft=parseInt(document.getElementById('timeSec').value)||60;
   msTotal_t=msLeft;msRunning=true;
   document.getElementById('screenStartBtn').textContent='Стоп';
   document.getElementById('timerWrap').style.display='block';
   const inp=document.getElementById('mathInput');
-  inp.disabled=false;
+  inp.disabled=false;inp.value='';
+  document.getElementById('signBtn').disabled=false;
   inp.addEventListener('input',onMsInput);
   inp.addEventListener('keydown',e=>{if(e.key==='Enter'){cancelMsDb();submitAns();}});
   document.getElementById('submitBtn').disabled=false;
@@ -481,7 +681,8 @@ function msTick(){
 function msNextQ(){
   const q=genQ();msAns=q.ans;
   document.getElementById('mathQ').textContent=q.qs+' = ?';
-  document.getElementById('mathInput').value='';document.getElementById('mathInput').focus();
+  const inp=document.getElementById('mathInput');
+  inp.value='';msNeg=false;inp.focus();
 }
 function submitAns(){
   if(!msRunning)return;
@@ -493,11 +694,18 @@ function endSession(){
   clearInterval(msTimer);msRunning=false;cancelMsDb();
   document.getElementById('mathInput').disabled=true;
   document.getElementById('submitBtn').disabled=true;
+  document.getElementById('signBtn').disabled=true;
+  document.getElementById('screenStartBtn').textContent='Старт';
   const sec=parseInt(document.getElementById('timeSec').value)||60;
+  // Сохраняем в статистику
+  pushStat('ms',{total:msT,right:msR,wrong:msW,pct:msT>0?msR/msT:0,sec});
   showResult('mathScreen',msR,msT,msW,`за ${sec} сек · ошибок: ${msW}`,'resetAndStart');
 }
 function resetAndStart(){buildMathScreen();setTimeout(startSession,50);}
-function resetSession(){clearInterval(msTimer);msRunning=false;msT=0;msR=0;msW=0;msUpdateStats();buildMathScreen();}
+function resetSession(){
+  clearInterval(msTimer);msRunning=false;cancelMsDb();
+  msT=0;msR=0;msW=0;msUpdateStats();buildMathScreen();
+}
 function buildMathScreen(){
   document.getElementById('mathScreen').innerHTML=`
     <div class="feedback-flash" id="msFeedback"></div>
@@ -509,7 +717,8 @@ function buildMathScreen(){
     <button class="screen-start-btn" id="screenStartBtn" onclick="toggleSession()">Старт</button>`;
   document.getElementById('mathInput').disabled=true;
   document.getElementById('submitBtn').disabled=true;
-  document.getElementById('mathInput').value='';
+  document.getElementById('signBtn').disabled=true;
+  document.getElementById('mathInput').value='';msNeg=false;
 }
 function msUpdateStats(){
   document.getElementById('sTotal').textContent=msT;
@@ -517,22 +726,29 @@ function msUpdateStats(){
   document.getElementById('sWrong').textContent=msW;
 }
 
-/* ── ОБРАТНЫЙ ПОРЯДОК ── */
-let rsLvl=3,rsT=0,rsR=0,rsW=0,rsSeq=[],rsPhase='idle';
+/* ══════════════════════════════
+   ОБРАТНЫЙ ПОРЯДОК
+══════════════════════════════ */
+let rsLvl=3,rsT=0,rsR=0,rsW=0,rsSeq=[],rsPhase='idle',rsShowTimer=null;
 function rsUpdateStats(){document.getElementById('rsTotal').textContent=rsT;document.getElementById('rsRight').textContent=rsR;document.getElementById('rsWrong').textContent=rsW;}
-function rsReset(){rsLvl=3;rsT=0;rsR=0;rsW=0;rsPhase='idle';rsUpdateStats();rsIdle();}
+function rsReset(){rsStop();rsLvl=3;rsT=0;rsR=0;rsW=0;rsPhase='idle';rsUpdateStats();rsIdle();}
+function rsStop(){
+  clearTimeout(rsShowTimer);rsPhase='idle';rsIdle();
+}
 function rsIdle(){
   document.getElementById('rsLevelLbl').textContent=`уровень — ${rsLvl} цифр`;
   document.getElementById('rsSeqDisplay').innerHTML='<span class="idle-msg">нажмите «Старт»</span>';
   document.getElementById('rsInputRow').style.display='none';
   document.getElementById('rsInputRow').innerHTML='';
   document.getElementById('rsStartBtn').style.display='';
+  document.getElementById('rsStopBtn').style.display='none';
 }
 function rsBegin(){
   rsPhase='show';
   rsSeq=Array.from({length:rsLvl},()=>ri(10));
   document.getElementById('rsLevelLbl').textContent=`уровень — ${rsLvl} цифр`;
   document.getElementById('rsStartBtn').style.display='none';
+  document.getElementById('rsStopBtn').style.display='';
   document.getElementById('rsInputRow').style.display='none';
   const disp=document.getElementById('rsSeqDisplay');
   disp.innerHTML='';
@@ -543,15 +759,17 @@ function rsBegin(){
   });
   let i=0;
   (function show(){
+    if(rsPhase!=='show')return;
     if(i>0)document.getElementById('rsd'+(i-1)).classList.remove('visible');
     if(i<rsSeq.length){
       const el=document.getElementById('rsd'+i);
       el.textContent=rsSeq[i];el.classList.add('visible');i++;
-      setTimeout(show,650);
-    } else setTimeout(rsAskInput,350);
+      rsShowTimer=setTimeout(show,650);
+    } else {rsShowTimer=setTimeout(rsAskInput,350);}
   })();
 }
 function rsAskInput(){
+  if(rsPhase!=='show')return;
   rsPhase='input';
   document.getElementById('rsSeqDisplay').innerHTML='<span style="font-family:var(--mono);font-size:13px;color:var(--text3)">введите в обратном порядке →</span>';
   const row=document.getElementById('rsInputRow');row.style.display='flex';row.innerHTML='';
@@ -568,7 +786,7 @@ function rsAskInput(){
     row.appendChild(inp);
   }
   const chk=document.createElement('button');
-  chk.className='btn primary';chk.textContent='Проверить';chk.style.marginLeft='4px';
+  chk.className='btn primary';chk.textContent='✓';chk.style.cssText='padding:0 14px;font-size:18px;';
   chk.onclick=rsCheck;row.appendChild(chk);
   document.getElementById('rsi0').focus();
 }
@@ -583,12 +801,15 @@ function rsCheck(){
   }
   rsT++;if(ok){rsR++;if(rsLvl<8)rsLvl++;}else{rsW++;if(rsLvl>3)rsLvl--;}
   rsUpdateStats();
+  // сохраняем
+  pushStat('rs',{maxLevel:rsLvl,total:rsT,right:rsR,wrong:rsW,pct:rsT>0?rsR/rsT:0});
   flash('rsFeedback',ok,rev.join('·'));
-  setTimeout(()=>{rsPhase='idle';rsIdle();rsBegin();},1500);
+  rsShowTimer=setTimeout(()=>{rsPhase='show';rsBegin();},1500);
 }
-rsIdle();
 
-/* ── N-BACK ── */
+/* ══════════════════════════════
+   N-BACK
+══════════════════════════════ */
 let nbN=2,nbT=0,nbR=0,nbW=0,nbSeq=[],nbRunning=false,nbTimer=null,nbAnswered=false;
 const NB_MS=2500;
 function setNB(btn){document.querySelectorAll('.diff-btn[data-n]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');nbN=parseInt(btn.dataset.n);}
@@ -609,7 +830,12 @@ function nbRun(){
   document.getElementById('nbHistory').innerHTML='';
   nbTick();
 }
-function nbStop(){clearTimeout(nbTimer);nbRunning=false;document.getElementById('nbYes').disabled=true;document.getElementById('nbNo').disabled=true;document.getElementById('nbStartBtn').textContent='Старт';}
+function nbStop(){
+  clearTimeout(nbTimer);nbRunning=false;
+  document.getElementById('nbYes').disabled=true;
+  document.getElementById('nbNo').disabled=true;
+  document.getElementById('nbStartBtn').textContent='Старт';
+}
 function nbTick(){
   if(!nbRunning)return;
   const num=ri(9)+1;nbSeq.push(num);
@@ -623,7 +849,6 @@ function nbTick(){
   document.getElementById('nbSublabel').textContent=canAns?`совпадает с ${nbN} шага назад?`:`запоминай... (${nbN}-back)`;
   nbTimer=setTimeout(()=>{
     if(canAns&&!nbAnswered){
-      // silence = implicit "нет"
       const isMatch=nbSeq[nbSeq.length-1]===nbSeq[nbSeq.length-1-nbN];
       if(isMatch){nbT++;nbW++;nbUpdateStats();nbDot('err');}
     }
@@ -638,32 +863,39 @@ function nbAns(yes){
   const ok=(yes===isMatch);
   nbT++;if(ok)nbR++;else nbW++;
   nbUpdateStats();flash('nbFeedback',ok,isMatch?'совпадение':'не совпадение');nbDot(ok?'ok':'err');
+  // периодически сохраняем
+  if(nbT%10===0)pushStat('nb',{total:nbT,right:nbR,wrong:nbW,pct:nbT>0?nbR/nbT:0,n:nbN});
 }
 function nbDot(cls){
   const h=document.getElementById('nbHistory');
   const d=document.createElement('div');d.className='nback-dot '+cls;h.appendChild(d);h.scrollLeft=h.scrollWidth;
 }
 
-/* ── PWA SERVICE WORKER ── */
-if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(()=>{});
-  });
-}
-
-/* ── ЦЕПОЧКИ ── */
-let chDiff='easy',chSteps=4,chT=0,chR=0,chW=0,chAns=0,chRunning=false,chDebT=null;
+/* ══════════════════════════════
+   ЦЕПОЧКИ
+══════════════════════════════ */
+let chDiff='easy',chSteps=4,chT=0,chR=0,chW=0,chAns=0,chRunning=false,chDebT=null,chNeg=false;
 const CH_DB=700;
 function setChDiff(btn){document.querySelectorAll('.diff-btn[data-chdiff]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');chDiff=btn.dataset.chdiff;}
 function setChSteps(btn){document.querySelectorAll('.diff-btn[data-steps]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');chSteps=parseInt(btn.dataset.steps);}
 function chUpdateStats(){document.getElementById('chTotal').textContent=chT;document.getElementById('chRight').textContent=chR;document.getElementById('chWrong').textContent=chW;}
-function chReset(){chRunning=false;chT=0;chR=0;chW=0;chUpdateStats();chIdle();}
-function chIdle(){
+function chReset(){chStop();chT=0;chR=0;chW=0;chUpdateStats();}
+function chStop(){
+  clearTimeout(chDebT);chRunning=false;
+  document.getElementById('chInput').disabled=true;
+  document.getElementById('chInput').value='';
+  document.getElementById('chSignBtn').disabled=true;
   document.getElementById('chDisplay').innerHTML='<span class="idle-msg">нажмите «Старт»</span>';
-  document.getElementById('chInput').disabled=true;document.getElementById('chInput').value='';
-  document.getElementById('chStartBtn').style.display='';document.getElementById('chMeta').textContent='';
+  document.getElementById('chStartBtn').style.display='';
+  document.getElementById('chStopBtn').style.display='none';
+  document.getElementById('chMeta').textContent='';
 }
-function chBegin(){chRunning=true;document.getElementById('chStartBtn').style.display='none';chNext();}
+function chBegin(){
+  chRunning=true;chNeg=false;
+  document.getElementById('chStartBtn').style.display='none';
+  document.getElementById('chStopBtn').style.display='';
+  chNext();
+}
 function chNext(){
   if(!chRunning)return;
   const {parts,ans,meta}=genChain(chDiff,chSteps);
@@ -675,16 +907,29 @@ function chNext(){
   });
   document.getElementById('chMeta').textContent=meta;
   const inp=document.getElementById('chInput');
-  inp.disabled=false;inp.value='';inp.focus();
+  inp.disabled=false;inp.value='';chNeg=false;inp.focus();
+  document.getElementById('chSignBtn').disabled=false;
   inp.oninput=onChInput;
   inp.onkeydown=e=>{if(e.key==='Enter'){clearTimeout(chDebT);chSubmit();}};
 }
+function toggleChSign(){
+  const inp=document.getElementById('chInput');
+  chNeg=!chNeg;
+  const digits=inp.value.replace('-','');
+  inp.value=chNeg&&digits?'-'+digits:digits;
+  if(chRunning&&inp.value&&inp.value!=='-')triggerChDebounce(inp);
+}
 function onChInput(e){
-  let v=e.target.value.replace(/[^0-9\-]/g,'').replace(/(?!^)-/g,'');e.target.value=v;
+  let v=e.target.value.replace(/[^0-9]/g,'');
+  chNeg=chNeg&&v!=='';
+  e.target.value=chNeg?'-'+v:v;
+  triggerChDebounce(e.target);
+}
+function triggerChDebounce(inp){
   clearTimeout(chDebT);
-  if(!chRunning||v===''||v==='-'){e.target.classList.remove('debouncing');return;}
-  e.target.classList.add('debouncing');
-  chDebT=setTimeout(()=>{e.target.classList.remove('debouncing');chSubmit();},CH_DB);
+  if(!chRunning||inp.value===''||inp.value==='-'){inp.classList.remove('debouncing');return;}
+  inp.classList.add('debouncing');
+  chDebT=setTimeout(()=>{inp.classList.remove('debouncing');chSubmit();},CH_DB);
 }
 function chSubmit(){
   if(!chRunning)return;
@@ -697,19 +942,14 @@ function chSubmit(){
 function genChain(diff,steps){
   const maxNum=diff==='easy'?9:diff==='medium'?20:50;
   const opsPool=diff==='easy'?['+','-']:diff==='medium'?['+','-','×']:['+','-','×','÷'];
-  let val=ri(maxNum-1)+2; // start >=2
+  let val=ri(maxNum-1)+2;
   const parts=[{v:String(val),op:false}];
   for(let s=0;s<steps-1;s++){
     let op,b,tries=0;
     do{
-      op=opsPool[ri(opsPool.length)];
-      b=ri(maxNum-1)+2;
-      if(op==='÷'){
-        // find divisors of val (integer division)
-        const divs=[];for(let d=2;d<=Math.abs(val);d++)if(val%d===0)divs.push(d);
-        if(divs.length===0){op='+';b=ri(maxNum-1)+1;}else{b=divs[ri(divs.length)];}
-      }
-      if(op==='-'&&diff==='easy'&&val-b<0){b=ri(val)+1;}
+      op=opsPool[ri(opsPool.length)];b=ri(maxNum-1)+2;
+      if(op==='÷'){const divs=[];for(let d=2;d<=Math.abs(val);d++)if(val%d===0)divs.push(d);if(divs.length===0){op='+';b=ri(maxNum-1)+1;}else{b=divs[ri(divs.length)];}}
+      if(op==='-'&&diff==='easy'&&val-b<0){b=ri(val)+1||1;}
       tries++;
     }while(tries<30&&op==='÷'&&(b===0||val%b!==0));
     const sym={'+':'+','-':'−','×':'×','÷':'÷'}[op];
@@ -719,6 +959,158 @@ function genChain(diff,steps){
   const dLabel=diff==='easy'?'лёгко':diff==='medium'?'средне':'сложно';
   return{parts,ans:val,meta:`${steps} шагов · ${dLabel}`};
 }
+
+/* ══════════════════════════════
+   СТРАНИЦА СТАТИСТИКИ
+══════════════════════════════ */
+function renderStatsPage(){
+  const container=document.getElementById('statsPage');
+  const stat=getStat();
+  const hasAny=stat.ms.length||stat.rs.length||stat.nb.length||stat.ch.length;
+
+  if(!hasAny){
+    container.innerHTML=`
+      <div style="text-align:center;padding:40px 0;">
+        <div style="font-size:40px;margin-bottom:12px;">🧠</div>
+        <div style="font-family:var(--mono);font-size:13px;color:var(--text3);">Сыграй хотя бы в одно упражнение —<br>здесь появится твоя статистика.</div>
+      </div>`;
+    return;
+  }
+
+  let html='';
+
+  // ── Общий прогресс
+  const allSessions=[...stat.ms,...stat.nb,...stat.ch];
+  const allRight=allSessions.reduce((s,e)=>s+(e.right||0),0);
+  const allTotal=allSessions.reduce((s,e)=>s+(e.total||0),0);
+  const overallPct=allTotal>0?Math.round(allRight/allTotal*100):0;
+  html+=`
+    <div class="overall-score">
+      <div>
+        <div class="overall-score-label">Общая точность</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--accent-text);margin-top:2px;">${allRight} из ${allTotal} ответов верно</div>
+      </div>
+      <div class="overall-score-val">${overallPct}%</div>
+    </div>`;
+
+  // ── Числовой штурм
+  if(stat.ms.length){
+    const last=stat.ms[stat.ms.length-1];
+    const prev=stat.ms.length>1?stat.ms[stat.ms.length-2]:null;
+    const trend=prev?trendBadge(last.pct,prev.pct):'';
+    const bestPct=Math.round(Math.max(...stat.ms.map(e=>e.pct))*100);
+    const avgPct=Math.round(stat.ms.reduce((s,e)=>s+e.pct,0)/stat.ms.length*100);
+    html+=statSection('⚡','Числовой штурм',[
+      ['Сессий сыграно',stat.ms.length,''],
+      ['Лучший результат',bestPct+'%',bestPct>=80?'good':bestPct>=50?'':'bad'],
+      ['Средний результат',avgPct+'%',avgPct>=80?'good':avgPct>=50?'':'bad'],
+      ['Последняя сессия',Math.round(last.pct*100)+'% '+trend,''],
+    ],last.pct,miniChart(stat.ms.map(e=>e.pct)));
+  }
+
+  // ── Обратный порядок
+  if(stat.rs.length){
+    const last=stat.rs[stat.rs.length-1];
+    const maxLvl=Math.max(...stat.rs.map(e=>e.maxLevel));
+    const avgPct=Math.round(stat.rs.reduce((s,e)=>s+e.pct,0)/stat.rs.length*100);
+    const prev=stat.rs.length>1?stat.rs[stat.rs.length-2]:null;
+    const trend=prev?trendBadge(last.pct,prev.pct):'';
+    html+=statSection('🔁','Обратный порядок',[
+      ['Раундов сыграно',stat.rs.length,''],
+      ['Макс. уровень',maxLvl+' цифр',''],
+      ['Текущий уровень',last.maxLevel+' цифр',''],
+      ['Точность (ср.)',avgPct+'% '+trend,avgPct>=70?'good':avgPct>=40?'':'bad'],
+    ],last.pct,miniChart(stat.rs.map(e=>e.pct)));
+  }
+
+  // ── N-back
+  if(stat.nb.length){
+    const last=stat.nb[stat.nb.length-1];
+    const bestPct=Math.round(Math.max(...stat.nb.map(e=>e.pct))*100);
+    const prev=stat.nb.length>1?stat.nb[stat.nb.length-2]:null;
+    const trend=prev?trendBadge(last.pct,prev.pct):'';
+    html+=statSection('🔢','N-back',[
+      ['Записей',stat.nb.length,''],
+      ['Лучший результат',bestPct+'%',bestPct>=70?'good':''],
+      ['Последняя запись',Math.round(last.pct*100)+'% '+trend,''],
+      ['Уровень (посл.)',last.n+'-back',''],
+    ],last.pct,miniChart(stat.nb.map(e=>e.pct)));
+  }
+
+  // ── Цепочки
+  if(stat.ch.length){
+    const last=stat.ch[stat.ch.length-1];
+    const bestPct=Math.round(Math.max(...stat.ch.map(e=>e.pct))*100);
+    const avgPct=Math.round(stat.ch.reduce((s,e)=>s+e.pct,0)/stat.ch.length*100);
+    const prev=stat.ch.length>1?stat.ch[stat.ch.length-2]:null;
+    const trend=prev?trendBadge(last.pct,prev.pct):'';
+    html+=statSection('🔗','Цепочки',[
+      ['Сессий сыграно',stat.ch.length,''],
+      ['Лучший результат',bestPct+'%',bestPct>=80?'good':bestPct>=50?'':'bad'],
+      ['Средний результат',avgPct+'%',avgPct>=80?'good':avgPct>=50?'':'bad'],
+      ['Последняя сессия',Math.round(last.pct*100)+'% '+trend,''],
+    ],last.pct,miniChart(stat.ch.map(e=>e.pct)));
+  }
+
+  html+=`<button class="btn danger clear-stats-btn" onclick="clearStats()">Очистить всю статистику</button>`;
+  container.innerHTML=html;
+}
+
+function statSection(icon,title,rows,lastPct,chart){
+  const pct=Math.round(lastPct*100);
+  const barColor=lastPct>=0.8?'#1a6e4a':lastPct>=0.5?'#8a5800':'#9b1c2a';
+  let rowsHtml=rows.map(([label,val,cls])=>`
+    <div class="stat-row">
+      <span class="stat-row-label">${label}</span>
+      <span class="stat-row-val ${cls}">${val}</span>
+    </div>`).join('');
+  return `
+    <div class="stat-section">
+      <div class="stat-section-title"><span class="ex-icon">${icon}</span>${title}</div>
+      ${rowsHtml}
+      ${chart}
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-label"><span>последний результат</span><span>${pct}%</span></div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+      </div>
+    </div>`;
+}
+
+function trendBadge(cur,prev){
+  const diff=cur-prev;
+  if(Math.abs(diff)<0.02)return '<span class="trend-badge trend-same">→ без изменений</span>';
+  if(diff>0)return `<span class="trend-badge trend-up">↑ +${Math.round(diff*100)}%</span>`;
+  return `<span class="trend-badge trend-down">↓ ${Math.round(diff*100)}%</span>`;
+}
+
+function miniChart(pcts){
+  if(pcts.length<2)return '';
+  const last=Math.min(pcts.length,20);
+  const slice=pcts.slice(-last);
+  const max=Math.max(...slice,0.01);
+  const bars=slice.map(v=>{
+    const h=Math.max(4,Math.round((v/max)*48));
+    const col=v>=0.8?'#1a6e4a':v>=0.5?'#8a5800':'#9b1c2a';
+    return `<div class="sessions-bar" style="height:${h}px;background:${col}" title="${Math.round(v*100)}%"></div>`;
+  }).join('');
+  return `<div class="sessions-chart">${bars}</div>`;
+}
+
+function clearStats(){
+  if(!confirm('Удалить всю статистику?'))return;
+  saveStat({ms:[],rs:[],nb:[],ch:[]});
+  renderStatsPage();
+}
+
+// Сохранение статистики цепочек при стопе
+const _chStop=chStop;
+chStop=function(){
+  if(chRunning&&chT>0)pushStat('ch',{total:chT,right:chR,wrong:chW,pct:chT>0?chR/chT:0});
+  _chStop();
+};
+
+// Инициализация
+renderStatsPage();
 </script>
 </body>
 </html>
