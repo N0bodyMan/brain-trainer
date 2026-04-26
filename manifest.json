@@ -1,0 +1,26 @@
+{
+  "name": "Тренажёр мозга",
+  "short_name": "Мозг",
+  "description": "Пять упражнений на память, счёт и концентрацию",
+  "start_url": "/brain-trainer/",
+  "scope": "/brain-trainer/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7f8fa",
+  "theme_color": "#4f6ef7",
+  "lang": "ru",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
