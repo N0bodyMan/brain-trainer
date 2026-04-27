@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Тренажёр мозга</title>
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -139,7 +141,7 @@ h1 span{color:var(--accent);}
 .math-ans-input:focus{outline:none;border-color:var(--accent);}
 .math-ans-input:disabled{opacity:.35;}
 .math-ans-input.debouncing{border-color:var(--accent);box-shadow:0 0 0 3px rgba(79,110,247,0.14);}
-.sign-btn{flex-shrink:0;width:46px;font-family:var(--mono);font-size:18px;font-weight:600;padding:0;border-radius:var(--rsm);border:1.5px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;transition:all .15s;}
+.sign-btn{flex-shrink:0;width:46px;font-family:var(--sans);font-size:15px;font-weight:700;letter-spacing:1px;padding:0;border-radius:var(--rsm);border:1.5px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;transition:all .15s;}
 .sign-btn:hover{border-color:var(--accent);color:var(--accent);}
 .sign-btn:disabled{opacity:.35;cursor:not-allowed;}
 .sign-btn.neg{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-text);}
@@ -295,8 +297,9 @@ h1 span{color:var(--accent);}
         <span class="desc-chevron">▾</span>
       </div>
       <div class="desc-body">
-        <p>Показывается четырёхзначное число. Нужно мысленно прибавить <strong>1, 2, 3, 4 и 5</strong> к каждой цифре по отдельности (по модулю 10, то есть 9+1=0).</p>
-        <p>Нажми на главную карточку чтобы скрыть/показать число. Нажми на карточку с ответом чтобы проверить себя.</p>
+        <p>Показывается четырёхзначное число. Нужно <strong>не глядя на цифры</strong> мысленно прибавить <strong>1, 2, 3, 4 и 5</strong> к каждой цифре по отдельности — держа число в голове, а не перед глазами.</p>
+        <p>Счёт по модулю 10: после девятки идёт ноль (9+1=0, 8+3=1 и т.д.).</p>
+        <p>Нажми на главную карточку чтобы <strong>скрыть число</strong> и тренировать память. Нажми на карточку с ответом чтобы проверить себя.</p>
       </div>
     </div>
     <div class="main-flip">
@@ -377,7 +380,7 @@ h1 span{color:var(--accent);}
       <button class="screen-start-btn" id="screenStartBtn" onclick="toggleSession()">Старт</button>
     </div>
     <div class="ans-input-row">
-      <button class="sign-btn" id="signBtn" onclick="toggleSign()" disabled title="сменить знак">±</button>
+      <button class="sign-btn" id="signBtn" onclick="toggleSign()" disabled title="сменить знак"><span style="letter-spacing:-1px">+</span><span style="font-size:12px">∕</span><span style="letter-spacing:-1px">−</span></button>
       <input type="text" inputmode="decimal" class="math-ans-input" id="mathInput" placeholder="ответ" disabled autocomplete="off">
       <button class="btn primary" id="submitBtn" onclick="submitAns()" disabled><span class="btn-ring"></span>ОК</button>
     </div>
@@ -542,7 +545,7 @@ h1 span{color:var(--accent);}
       <div class="chain-display" id="chDisplay"><span class="idle-msg">нажмите «Старт»</span></div>
       <div class="chain-ans-wrap">
         <input type="text" inputmode="decimal" class="chain-ans-input" id="chInput" placeholder="= ?" disabled autocomplete="off">
-        <button class="sign-btn" id="chSignBtn" onclick="toggleChSign()" disabled title="сменить знак">±</button>
+        <button class="sign-btn" id="chSignBtn" onclick="toggleChSign()" disabled title="сменить знак"><span style="letter-spacing:-1px">+</span><span style="font-size:12px">∕</span><span style="letter-spacing:-1px">−</span></button>
       </div>
       <div class="vk-wrap" id="chVkWrap">
         <div class="vk-grid">
