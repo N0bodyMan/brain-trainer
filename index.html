@@ -316,9 +316,9 @@ h1 span{color:var(--accent);}
         <span class="desc-chevron">▾</span>
       </div>
       <div class="desc-body">
-        <p>Показывается четырёхзначное число. Нужно <strong>не глядя на цифры</strong> мысленно прибавить <strong>1, 2, 3, 4 и 5</strong> к каждой цифре по отдельности — держа число в голове, а не перед глазами.</p>
-        <p>Счёт по модулю 10: после девятки идёт ноль (9+1=0, 8+3=1 и т.д.).</p>
-        <p>Нажми на главную карточку чтобы <strong>скрыть число</strong> и тренировать память. Нажми на карточку с ответом чтобы проверить себя.</p>
+        <p>Цифры показываются <strong>по одной</strong> — запомни их. Затем по очереди появляются задания: <strong>+1, +2, +3, +4, +5</strong>. Прибавь к каждой цифре числа — всё в уме, число скрыто.</p>
+        <p>Каждый вопрос виден только один — ответил, он исчез. Нельзя подглядеть предыдущие. Счёт по модулю 10: 9+1=0, 8+3=1.</p>
+        <p>Нажми 👁 чтобы подсмотреть число или ответ — но это осознанная помощь себе.</p>
       </div>
     </div>
     <div class="pn-screen" id="pnScreen">
@@ -667,137 +667,224 @@ function toggleSettings(id){document.getElementById(id).classList.toggle('open')
 
 /* ══════════════════════════════
    PLUS N  (новая механика)
+   
+   Фазы: idle → digits (показ по одной) → input (один вопрос за раз) → result
+   Ключевая идея: игрок видит только ОДИН вопрос (+N) за раз.
+   Ответ принят → вопрос исчезает, появляется следующий.
+   Предыдущие ответы не видны — нельзя подсматривать.
 ══════════════════════════════ */
 const plusLabels=[{cls:'p1',txt:'+1'},{cls:'p2',txt:'+2'},{cls:'p3',txt:'+3'},{cls:'p4',txt:'+4'},{cls:'p5',txt:'+5'}];
 let curDigits=[];
-let pnTimerT=null, pnPhase='idle'; // idle | show | input
-const PN_SHOW_MS=5000;
+let pnTimerT=null, pnPhase='idle';
+let pnStep=0;       // текущий шаг (0-4 = +1..+5)
+let pnResults=[];   // {n, correct} для итогового экрана
+const PN_SHOW_MS=800; // задержка между цифрами при показе
 
 function ri(n){return Math.floor(Math.random()*n);}
 function rndSigned(n){return ri(n*2)-n;}
 function addN(d,n){return d.map(x=>(x+n)%10).join('');}
 
+// ── СТАРТ: показываем цифры по одной как в "Обратном" ──────────────────────
 function pnStart(){
-  clearTimeout(pnTimerT);
-  pnPhase='show';
-  curDigits=[ri(10),ri(10),ri(10),ri(10)];
-  const num=curDigits.join('');
-
-  // Build screen: show number + timer bar + "запомнил" button
-  document.getElementById('pnScreen').innerHTML=`
-    <div style="display:flex;flex-direction:column;align-items:center;gap:14px;">
-      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.5px;">запомни число</div>
-      <div id="pnCardInner" style="cursor:pointer;" onclick="pnToggleNumber()" title="скрыть/показать">
-        <span id="pnNumber" style="font-family:var(--mono);font-size:54px;font-weight:500;letter-spacing:10px;color:var(--text);">${num}</span>
-      </div>
-      <div style="width:100%">
-        <div class="pn-timer-bar-bg"><div class="pn-timer-bar-fill" id="pnBar" style="width:100%"></div></div>
-        <div style="font-family:var(--mono);font-size:11px;color:var(--text3);text-align:right;margin-top:4px;" id="pnTimerTxt">5.0 сек</div>
-      </div>
-      <button class="btn primary" onclick="pnShowInput()" style="width:100%">Готов — начать ввод</button>
-    </div>`;
-
-  // Show input area hidden for now
-  document.getElementById('pnInputArea').style.display='none';
-
-  // Countdown timer
-  let left=PN_SHOW_MS;
-  const tick=setInterval(()=>{
-    left-=100;
-    const bar=document.getElementById('pnBar');
-    const txt=document.getElementById('pnTimerTxt');
-    if(!bar){clearInterval(tick);return;}
-    const pct=Math.max(0,left/PN_SHOW_MS*100);
-    bar.style.width=pct+'%';
-    bar.style.background=pct>50?'var(--accent)':pct>20?'#f0a020':'#e84050';
-    if(txt)txt.textContent=(left/1000).toFixed(1)+' сек';
-    if(left<=0){clearInterval(tick);pnShowInput();}
-  },100);
-  pnTimerT=tick;
-}
-
-function pnToggleNumber(){
-  const el=document.getElementById('pnNumber');
-  if(!el)return;
-  if(el.style.opacity==='0'||el.dataset.hidden==='1'){
-    el.style.opacity='1';el.dataset.hidden='0';
-  } else {
-    el.style.opacity='0';el.dataset.hidden='1';
-  }
-}
-
-function pnShowInput(){
   clearInterval(pnTimerT);
-  pnPhase='input';
+  pnPhase='digits';
+  pnStep=0;
+  pnResults=[];
+  curDigits=[ri(10),ri(10),ri(10),ri(10)];
 
-  // Card shows number hidden with eye to reveal
-  document.getElementById('pnScreen').innerHTML=`
-    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
-      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);">нажми чтобы посмотреть число</div>
-      <div onclick="pnToggleReveal(this)" style="cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;padding:18px 32px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);width:100%;" id="pnRevealCard">
-        <span style="font-size:26px;">👁</span>
-        <span style="font-family:var(--mono);font-size:12px;color:var(--text3);">показать число</span>
+  document.getElementById('pnInputArea').style.display='none';
+  const scr=document.getElementById('pnScreen');
+  scr.innerHTML=`
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;">
+      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);letter-spacing:.5px;">запоминай цифры</div>
+      <div id="pnDigitSlot" style="font-family:var(--mono);font-size:72px;font-weight:500;color:var(--text);min-height:90px;display:flex;align-items:center;justify-content:center;transition:opacity .15s;">·</div>
+      <div style="display:flex;gap:6px;" id="pnDots">
+        ${curDigits.map((_,i)=>`<div id="pndot${i}" style="width:8px;height:8px;border-radius:50%;background:var(--surface3);transition:background .2s;"></div>`).join('')}
       </div>
     </div>`;
 
-  // Build input rows
+  // показываем каждую цифру по очереди
+  let i=0;
+  function showNext(){
+    if(pnPhase!=='digits')return;
+    const slot=document.getElementById('pnDigitSlot');
+    if(!slot)return;
+    if(i>0){
+      // гасим
+      slot.style.opacity='0';
+      setTimeout(()=>{
+        if(pnPhase!=='digits')return;
+        if(i<curDigits.length){
+          slot.textContent=curDigits[i];
+          slot.style.opacity='1';
+          const dot=document.getElementById('pndot'+i);
+          if(dot)dot.style.background='var(--accent)';
+          i++;
+          pnTimerT=setTimeout(showNext, PN_SHOW_MS);
+        } else {
+          // все показаны → пауза → начало ввода
+          slot.textContent='✓';
+          slot.style.opacity='1';
+          slot.style.color='var(--green)';
+          pnTimerT=setTimeout(pnBeginInput, 600);
+        }
+      },150);
+    } else {
+      // первая цифра
+      slot.textContent=curDigits[0];
+      slot.style.opacity='1';
+      const dot=document.getElementById('pndot0');
+      if(dot)dot.style.background='var(--accent)';
+      i=1;
+      pnTimerT=setTimeout(showNext, PN_SHOW_MS);
+    }
+  }
+  pnTimerT=setTimeout(showNext, 400);
+}
+
+// ── НАЧАЛО ВВОДА: показываем только один вопрос ────────────────────────────
+function pnBeginInput(){
+  pnPhase='input';
+  pnStep=0;
+  pnShowStep();
+}
+
+function pnShowStep(){
+  const scr=document.getElementById('pnScreen');
+  const num=curDigits.join('');
+  const l=plusLabels[pnStep];
+  const n=pnStep+1;
+  const ans=addN(curDigits,n);
+
+  // Карточка с числом (скрытая, можно раскрыть)
+  scr.innerHTML=`
+    <div style="display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;">
+      <div onclick="pnToggleReveal(this)" data-shown="0" id="pnRevealCard"
+        style="cursor:pointer;width:100%;display:flex;flex-direction:column;align-items:center;gap:6px;
+               padding:14px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);">
+        <span style="font-size:22px;">👁</span>
+        <span style="font-family:var(--mono);font-size:11px;color:var(--text3);">показать число</span>
+      </div>
+      <div id="pnFeedback" style="font-family:var(--sans);font-size:13px;font-weight:600;opacity:0;transition:opacity .15s;padding:5px 16px;border-radius:20px;"></div>
+    </div>`;
+
+  // Поле ввода для текущего шага
   const area=document.getElementById('pnInputArea');
   area.style.display='block';
-  const rows=document.getElementById('pnRows');
-  rows.innerHTML='';
-  plusLabels.forEach((l,i)=>{
-    const n=i+1,ans=addN(curDigits,n);
-    const row=document.createElement('div');row.className='pn-row';
-    row.innerHTML=`
-      <span class="pn-row-label plus-badge ${l.cls}">${l.txt}</span>
-      <input type="text" inputmode="numeric" class="pn-input" id="pni${n}" placeholder="····" maxlength="4" autocomplete="off">
-      <button class="pn-reveal-btn" id="pnr${n}" onclick="pnRevealRow(${n},'${ans}')" data-ans="${ans}" data-shown="0">👁</button>`;
-    rows.appendChild(row);
-    // auto-focus first
-    if(i===0)setTimeout(()=>document.getElementById('pni1').focus(),80);
-  });
+  area.innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-family:var(--mono);font-size:12px;color:var(--text3);">шаг ${n} из 5</span>
+        <div style="display:flex;gap:4px;">${pnResults.map(r=>`<span style="font-size:14px;">${r.correct?'✓':'✗'}</span>`).join('')}${'·'.repeat(5-pnResults.length).split('').map(()=>'<span style="font-size:14px;color:var(--text3);">·</span>').join('')}</div>
+      </div>
+      <div class="pn-row" style="gap:10px;">
+        <span class="pn-row-label plus-badge ${l.cls}" style="font-size:15px;padding:6px 12px;">${l.txt}</span>
+        <input type="text" inputmode="numeric" class="pn-input" id="pnCurInput"
+          placeholder="····" maxlength="4" autocomplete="off"
+          style="font-size:22px;padding:12px;">
+        <button class="pn-reveal-btn" id="pnAnsBtn"
+          onclick="pnRevealAns('${ans}')" data-shown="0" data-ans="${ans}">👁</button>
+      </div>
+      <button class="btn primary" onclick="pnSubmitStep()" style="width:100%;">Проверить →</button>
+    </div>`;
+
+  setTimeout(()=>{
+    const inp=document.getElementById('pnCurInput');
+    if(inp&&!vkState.ms)inp.focus();
+  },80);
 }
 
 function pnToggleReveal(card){
   const num=curDigits.join('');
   const shown=card.dataset.shown==='1';
   if(shown){
-    card.innerHTML=`<span style="font-size:26px;">👁</span><span style="font-family:var(--mono);font-size:12px;color:var(--text3);">показать число</span>`;
+    card.innerHTML=`<span style="font-size:22px;">👁</span><span style="font-family:var(--mono);font-size:11px;color:var(--text3);">показать число</span>`;
     card.dataset.shown='0';
   } else {
-    card.innerHTML=`<span style="font-family:var(--mono);font-size:42px;font-weight:500;letter-spacing:8px;color:var(--text);">${num}</span><span style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:4px;">нажми чтобы скрыть</span>`;
+    card.innerHTML=`<span style="font-family:var(--mono);font-size:40px;font-weight:500;letter-spacing:8px;color:var(--text);">${num}</span>
+      <span style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:4px;">нажми чтобы скрыть</span>`;
     card.dataset.shown='1';
   }
 }
 
-function pnRevealRow(n,ans){
-  const btn=document.getElementById('pnr'+n);
+function pnRevealAns(ans){
+  const btn=document.getElementById('pnAnsBtn');
+  if(!btn)return;
   const shown=btn.dataset.shown==='1';
-  if(shown){
-    btn.textContent='👁';btn.classList.remove('shown');btn.dataset.shown='0';
+  if(shown){btn.textContent='👁';btn.classList.remove('shown');btn.dataset.shown='0';}
+  else{btn.textContent=ans;btn.classList.add('shown');btn.dataset.shown='1';}
+}
+
+function pnSubmitStep(){
+  const inp=document.getElementById('pnCurInput');
+  if(!inp)return;
+  const val=inp.value.trim();
+  if(!val)return;
+  const n=pnStep+1;
+  const ans=addN(curDigits,n);
+  const correct=val===ans;
+  pnResults.push({n,correct,ans,given:val});
+
+  // Brief feedback flash
+  const fb=document.getElementById('pnFeedback');
+  if(fb){
+    fb.textContent=correct?'Верно!':'Нет — правильно: '+ans;
+    fb.style.background=correct?'var(--green-bg)':'var(--red-bg)';
+    fb.style.color=correct?'var(--green)':'var(--red)';
+    fb.style.opacity='1';
+  }
+
+  // Disable input immediately — result is locked
+  inp.disabled=true;
+  inp.style.opacity='0.4';
+  document.querySelector('#pnInputArea .btn.primary').disabled=true;
+
+  // Next step after short delay
+  pnStep++;
+  if(pnStep<5){
+    setTimeout(pnShowStep, 900);
   } else {
-    btn.textContent=ans;btn.classList.add('shown');btn.dataset.shown='1';
+    setTimeout(pnShowResult, 900);
   }
 }
 
-function pnCheck(){
-  let anyInput=false;
-  plusLabels.forEach((_,i)=>{
-    const n=i+1,ans=addN(curDigits,n);
-    const inp=document.getElementById('pni'+n);
-    if(!inp||!inp.value)return;
-    anyInput=true;
-    const ok=inp.value===ans;
-    inp.classList.remove('correct','wrong');
-    inp.classList.add(ok?'correct':'wrong');
-    // also reveal correct answer if wrong
-    if(!ok){
-      const btn=document.getElementById('pnr'+n);
-      if(btn&&btn.dataset.shown!=='1'){
-        btn.textContent=ans;btn.classList.add('shown');btn.dataset.shown='1';
-      }
-    }
-  });
+function pnShowResult(){
+  pnPhase='result';
+  const right=pnResults.filter(r=>r.correct).length;
+  const pct=right/5;
+  const g=pct>=0.8?'grade-green':pct>=0.5?'grade-amber':'grade-red';
+  const phrases={
+    'grade-green':['Мозг работает отлично!','Все цифры в голове!','Чисто и точно!'],
+    'grade-amber':['Почти! Ещё немного.','Хороший результат.','Тренируйся дальше!'],
+    'grade-red':['Не сдавайся!','Мозгу нужна разминка.','Попробуй снова.']
+  };
+  const phrase=phrases[g][ri(phrases[g].length)];
+
+  // Detail rows
+  const rows=pnResults.map(r=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
+      <span class="plus-badge ${plusLabels[r.n-1].cls}">${plusLabels[r.n-1].txt}</span>
+      <span style="font-family:var(--mono);font-size:13px;color:var(--text2);">твой: <strong style="color:var(--text)">${r.given}</strong></span>
+      <span style="font-family:var(--mono);font-size:13px;">${r.correct
+        ?'<span style="color:var(--green)">✓</span>'
+        :`<span style="color:var(--red)">✗ ${r.ans}</span>`}</span>
+    </div>`).join('');
+
+  document.getElementById('pnScreen').innerHTML=`
+    <div class="result-card ${g}" style="gap:8px;">
+      <div class="result-label">верно</div>
+      <div class="result-score">${right}/5</div>
+      <div class="result-phrase">${phrase}</div>
+    </div>`;
+
+  document.getElementById('pnInputArea').innerHTML=`
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:12px;">
+      ${rows}
+    </div>
+    <div class="btn-row">
+      <button class="btn primary" onclick="pnStart()">Ещё раз</button>
+    </div>`;
+  document.getElementById('pnInputArea').style.display='block';
 }
 
 // Stop Plus N when switching tabs
