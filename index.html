@@ -180,7 +180,7 @@ h1 span{color:var(--accent);}
 /* N-BACK */
 .nback-display{font-family:var(--mono);font-size:76px;font-weight:500;color:var(--text);line-height:1;min-height:90px;display:flex;align-items:center;justify-content:center;transition:opacity .08s;}
 .nback-display.flash{opacity:0;}
-.nback-sublabel{font-family:var(--mono);font-size:12px;color:var(--text3);letter-spacing:.4px;text-align:center;width:100%;}
+.nback-sublabel{font-family:var(--mono);font-size:12px;color:var(--text3);letter-spacing:.4px;text-align:center;display:block;width:100%;}
 .nback-btn-row{display:flex;gap:10px;}
 .nback-btn{font-family:var(--sans);font-size:13px;font-weight:600;padding:11px 26px;border-radius:var(--rsm);border:none;cursor:pointer;transition:all .15s;}
 .nback-btn.yes{background:var(--green-bg);color:var(--green);}
@@ -600,7 +600,7 @@ h1 span{color:var(--accent);}
     <div class="game-screen" id="nbScreen">
       <div class="feedback-flash" id="nbFeedback"></div>
       <div class="nback-display" id="nbDisplay" style="color:transparent;">0</div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;"><div class="nback-sublabel" id="nbSublabel" style="text-align:center;">нажмите «Старт»</div><span id="nbSpeedBadge" style="font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:20px;opacity:0;transition:opacity .3s;"></span></div>
+      <div style="width:100%;text-align:center;"><div class="nback-sublabel" id="nbSublabel">нажмите «Старт»</div><span id="nbSpeedBadge" style="font-family:var(--mono);font-size:11px;color:var(--accent);background:var(--accent-soft);padding:2px 8px;border-radius:20px;opacity:0;transition:opacity .3s;position:absolute;right:0;top:50%;transform:translateY(-50%);"></span></div></div>
       <div class="nback-history" id="nbHistory"></div>
       <div class="nback-btn-row">
         <button class="nback-btn no" id="nbNo" onclick="nbAns(false)" disabled>Нет</button>
@@ -2134,7 +2134,8 @@ function wizRsAskInput(){
   const chk=document.createElement('button');
   chk.className='btn primary';chk.textContent='✓';chk.style.cssText='padding:0 14px;font-size:18px;';
   chk.onclick=wizRsCheck;row.appendChild(chk);
-  // VK for wizard RS
+  // VK for wizard RS — only create once
+  if(document.getElementById('wizRsVkWrap'))return; // already exists
   const wizRsVkWrap=document.createElement('div');
   wizRsVkWrap.className='vk-wrap';wizRsVkWrap.id='wizRsVkWrap';
   wizRsVkWrap.innerHTML=`<div class="vk-grid">
@@ -2152,8 +2153,9 @@ function wizRsAskInput(){
     <button class="vk-key vk-ok" onclick="wizRsCheck()">OK</button>
   </div>`;
   const wizRsScreen=document.getElementById('wizRsScreen');
-  if(wizRsScreen)wizRsScreen.appendChild(wizRsVkWrap);
+  if(wizRsScreen&&!document.getElementById('wizRsVkWrap'))wizRsScreen.appendChild(wizRsVkWrap);
   // Toggle button
+  if(document.getElementById('wizRsVkBtn'))return; // already exists
   const wizRsVkBtn=document.createElement('button');
   wizRsVkBtn.className='vk-toggle-btn';wizRsVkBtn.id='wizRsVkBtn';
   wizRsVkBtn.textContent='⌨ клавиатура';
@@ -2554,8 +2556,10 @@ function wizRsVkDel(){
 function resetDailyWorkout(){
   if(!confirm('Сбросить тренировку дня и начать заново?'))return;
   const dw=getDailyWorkout();
-  dw.lastDate='';dw.lastScore=0;
+  dw.lastDate=''; // clear date so it's not "done" today
+  dw.lastScore=0;
   SS.set('dailyWorkout',dw);
+  // Note: streak is NOT reset — only today's workout result is cleared
   renderHomePage();
 }
 
