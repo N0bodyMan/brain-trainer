@@ -180,7 +180,7 @@ h1 span{color:var(--accent);}
 /* N-BACK */
 .nback-display{font-family:var(--mono);font-size:76px;font-weight:500;color:var(--text);line-height:1;min-height:90px;display:flex;align-items:center;justify-content:center;transition:opacity .08s;}
 .nback-display.flash{opacity:0;}
-.nback-sublabel{font-family:var(--mono);font-size:12px;color:var(--text3);letter-spacing:.4px;text-align:center;flex:1;}
+.nback-sublabel{font-family:var(--mono);font-size:12px;color:var(--text3);letter-spacing:.4px;text-align:center;width:100%;}
 .nback-btn-row{display:flex;gap:10px;}
 .nback-btn{font-family:var(--sans);font-size:13px;font-weight:600;padding:11px 26px;border-radius:var(--rsm);border:none;cursor:pointer;transition:all .15s;}
 .nback-btn.yes{background:var(--green-bg);color:var(--green);}
@@ -1334,8 +1334,13 @@ function nbTick(){
   }
   nbSeq.push(num);
   const disp=document.getElementById('nbDisplay');
-  disp.classList.add('flash');
-  setTimeout(()=>{disp.style.color='';disp.style.fontSize='';disp.textContent=num;disp.classList.remove('flash');},80);
+  disp.style.transition='opacity .08s';
+  disp.style.opacity='0';
+  setTimeout(()=>{
+    disp.style.color='';
+    disp.textContent=num;
+    disp.style.opacity='1';
+  },90);
   const canAns=nbSeq.length>nbN;
   nbAnswered=false;
   document.getElementById('nbYes').disabled=!canAns;
@@ -1701,18 +1706,20 @@ function vkMinus(key){
   const isNeg=inp.value.startsWith('-');
   if(isNeg){
     inp.value=inp.value.slice(1);
-    negBtn.classList.remove('active');
+    if(negBtn)negBtn.classList.remove('active');
     if(key==='ms'){msNeg=false;document.getElementById('signBtn').classList.remove('neg');}
     else{chNeg=false;document.getElementById('chSignBtn').classList.remove('neg');}
   } else {
-    if(inp.value)inp.value='-'+inp.value;
-    else inp.value='-';
-    negBtn.classList.add('active');
+    inp.value='-'+(inp.value||''); // always prepend, even if empty → '-'
+    if(negBtn)negBtn.classList.add('active');
     if(key==='ms'){msNeg=true;document.getElementById('signBtn').classList.add('neg');}
     else{chNeg=true;document.getElementById('chSignBtn').classList.add('neg');}
   }
-  if(key==='ms')triggerMsDebounce(inp);
-  else triggerChDebounce(inp);
+  // Don't trigger debounce if only '-' entered yet
+  if(inp.value!=='-'){
+    if(key==='ms')triggerMsDebounce(inp);
+    else triggerChDebounce(inp);
+  }
 }
 
 // Reset VK state when session ends/resets
@@ -2051,12 +2058,41 @@ function wizMsDone(){
 }
 
 // ── Wizard: Reverse Span mini ────────────────────────────
-let wizRs={level:3,seq:[],phase:'idle',right:0,total:0,showTimer:null};
+let wizRs={level:3,seq:[],phase:'idle',right:0,total:0,showTimer:null,timeLeft:45,running:false,countdown:null};
 
 function wizRsBegin(){
+  // Start timer on first round
+  if(!wizRs.running){
+    wizRs.running=true;
+    wizRs.timeLeft=45;
+    wizRs.countdown=setInterval(()=>{
+      wizRs.timeLeft-=0.1;
+      const bar=document.getElementById('wizRsBar');
+      const txt=document.getElementById('wizRsTimerTxt');
+      if(!bar){clearInterval(wizRs.countdown);return;}
+      const pct=Math.max(0,wizRs.timeLeft/45*100);
+      bar.style.width=pct+'%';
+      bar.style.background=pct>50?'var(--accent)':pct>20?'#f0a020':'#e84050';
+      if(txt)txt.textContent=Math.max(0,wizRs.timeLeft).toFixed(1)+' сек';
+      if(wizRs.timeLeft<=0){
+        clearInterval(wizRs.countdown);wizRs.running=false;
+        // Force end current round
+        wizRs.phase='done';
+        wizNextStep({maxLevel:wizRs.level,right:wizRs.right,total:wizRs.total,wrong:wizRs.total-wizRs.right,pct:wizRs.total?wizRs.right/wizRs.total:0});
+      }
+    },100);
+    // Inject timer bar into wizRsScreen
+    const scr=document.getElementById('wizRsScreen');
+    if(scr&&!document.getElementById('wizRsBar')){
+      const bar=document.createElement('div');
+      bar.className='timer-wrap';bar.id='wizRsTimerWrap';
+      bar.innerHTML='<div class="timer-bar-bg"><div class="timer-bar-fill" id="wizRsBar" style="width:100%"></div></div><div class="timer-text" id="wizRsTimerTxt">45.0 сек</div>';
+      scr.insertBefore(bar,scr.firstChild);
+    }
+  }
   wizRs.phase='show';
   wizRs.seq=Array.from({length:wizRs.level},()=>ri(10));
-  document.getElementById('wizRsLevel').textContent=`уровень — ${wizRs.level} цифр`;
+  document.getElementById('wizRsLevel').textContent=`${wizRs.right}✓ ${wizRs.total-wizRs.right}✗ · уровень ${wizRs.level}`;
   document.getElementById('wizRsStartBtn').style.display='none';
   const disp=document.getElementById('wizRsSeq');disp.innerHTML='';
   wizRs.seq.forEach((_,i)=>{
@@ -2146,9 +2182,13 @@ function wizRsCheck(){
   if(ok){wizRs.right++;if(wizRs.level<8)wizRs.level++;}
   else{if(wizRs.level>3)wizRs.level--;}
   flash('wizRsFeedback',ok,rev.join('·'));
+  // Continue rounds until time runs out
   setTimeout(()=>{
-    // After 1 round in wizard → done
-    wizNextStep({maxLevel:wizRs.level,right:wizRs.right,total:wizRs.total,wrong:wizRs.total-wizRs.right,pct:wizRs.right/wizRs.total});
+    if(wizRs.timeLeft>0&&wizRs.running){
+      wizRsBegin(); // next round
+    } else {
+      wizNextStep({maxLevel:wizRs.level,right:wizRs.right,total:wizRs.total,wrong:wizRs.total-wizRs.right,pct:wizRs.total?wizRs.right/wizRs.total:0});
+    }
   },1200);
 }
 
@@ -2188,12 +2228,21 @@ function wizNbTick(){
   wizNb.seq.push(num);
   const disp=document.getElementById('wizNbDisplay');
   if(!disp)return;
-  disp.classList.add('flash');
-  setTimeout(()=>{disp.style.color='';disp.style.fontSize='';disp.textContent=num;disp.classList.remove('flash');},80);
+  // Fade out → change text → fade in (same as normal nb)
+  disp.style.transition='opacity .08s';
+  disp.style.opacity='0';
+  setTimeout(()=>{
+    if(!disp)return;
+    disp.style.color='';
+    disp.textContent=num;
+    disp.style.opacity='1';
+  },90);
   const canAns=wizNb.seq.length>2;
   wizNb.answered=false;
-  document.getElementById('wizNbYes').disabled=!canAns;
-  document.getElementById('wizNbNo').disabled=!canAns;
+  const yesBtn=document.getElementById('wizNbYes');
+  const noBtn=document.getElementById('wizNbNo');
+  if(yesBtn)yesBtn.disabled=!canAns;
+  if(noBtn)noBtn.disabled=!canAns;
   const lbl=document.getElementById('wizNbLabel');
   if(lbl)lbl.textContent=canAns?'совпадает с 2 шага назад?':'запоминай...';
   wizNb.timer=setTimeout(()=>{
@@ -2278,6 +2327,9 @@ function renderHomePage(){
       <span class="daily-btn-icon">${done?'✓':'🧠'}</span>
       ${done?'Тренировка выполнена':'Начать тренировку дня'}
     </button>
+    \${done?`<div style="text-align:center;margin-top:-4px;margin-bottom:8px;">
+      <button onclick="resetDailyWorkout()" style="font-family:var(--mono);font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;padding:4px 0;">↺ сбросить тренировку дня</button>
+    </div>`:''}
 
     <div id="homeChart"></div>
     <div id="homeInsights"></div>`;
@@ -2455,8 +2507,15 @@ function wizVkDel(){
 function wizVkMinus(){
   const inp=document.getElementById('wizMsInput');if(!inp||inp.disabled)return;
   const btn=document.getElementById('wizVkMinus');
-  if(inp.value.startsWith('-')){inp.value=inp.value.slice(1);if(btn)btn.classList.remove('active');}
-  else{if(inp.value)inp.value='-'+inp.value;if(btn)btn.classList.add('active');}
+  if(inp.value.startsWith('-')){
+    inp.value=inp.value.slice(1);
+    if(btn)btn.classList.remove('active');
+    wizMs.neg=false;
+  } else {
+    inp.value='-'+inp.value; // prepend minus even if empty → '-'
+    if(btn)btn.classList.add('active');
+    wizMs.neg=true;
+  }
 }
 function wizRsVkPress(d){
   let target=null;
@@ -2469,6 +2528,15 @@ function wizRsVkPress(d){
 }
 function wizRsVkDel(){
   for(let i=wizRs.level-1;i>=0;i--){const c=document.getElementById('wzrsi'+i);if(c&&c.value){c.value='';c.focus();break;}}
+}
+
+
+function resetDailyWorkout(){
+  if(!confirm('Сбросить тренировку дня и начать заново?'))return;
+  const dw=getDailyWorkout();
+  dw.lastDate='';dw.lastScore=0;
+  SS.set('dailyWorkout',dw);
+  renderHomePage();
 }
 
 </script>
