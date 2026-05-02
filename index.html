@@ -2288,55 +2288,75 @@ function renderHomePage(){
   const hist=SS.get('brainScoreHistory')||[];
   const prevScore=hist.length>=2?hist[hist.length-2]?.score:null;
   const delta=score!==null&&prevScore!==null?score-prevScore:null;
-  const deltaHtml=delta===null?'':`<span class="brain-score-delta ${delta>0?'delta-up':delta<0?'delta-dn':'delta-eq'}">${delta>0?'+':''}${delta}</span>`;
+
+  let deltaHtml='';
+  if(delta!==null){
+    const cls=delta>0?'delta-up':delta<0?'delta-dn':'delta-eq';
+    const sign=delta>0?'+':'';
+    deltaHtml='<span class="brain-score-delta '+cls+'">'+sign+delta+'</span>';
+  }
+
   const scoreColor=score===null?'#9aa0ad':score>=75?'#1a6e4a':score>=50?'#8a5800':'#9b1c2a';
   const circumference=2*Math.PI*38;
   const dashOffset=score===null?circumference:circumference*(1-(score/100));
+  const scoreDisplay=score!==null?score:'—';
 
-  container.innerHTML=`
-    <div class="home-hero">
-      <div class="hero-top">
-        <div class="streak-badge">
-          <span style="font-size:18px;">🔥</span>
-          <div>
-            <div class="streak-num">${streak.current} <span style="font-size:11px;">дн.</span></div>
-            <div class="streak-lbl">серия</div>
-          </div>
-        </div>
-        <div class="brain-score-wrap">
-          <div class="brain-score-ring">
-            <svg viewBox="0 0 90 90" width="90" height="90">
-              <circle class="bsr-bg" cx="45" cy="45" r="38"/>
-              <circle class="bsr-fill" cx="45" cy="45" r="38"
-                stroke="${scoreColor}"
-                stroke-dasharray="${circumference}"
-                stroke-dashoffset="${dashOffset}"/>
-            </svg>
-            <div class="brain-score-val">
-              <div class="brain-score-num">${score??'—'}</div>
-              <div class="brain-score-sub">score</div>
-            </div>
-          </div>
-          ${deltaHtml}
-        </div>
-      </div>
-      ${done?`<div style="font-family:var(--mono);font-size:12px;color:var(--green);text-align:center;margin-bottom:12px;">✓ Тренировка сегодня выполнена · ${dw.lastScore} очков</div>`:''}
-    </div>
+  // Daily workout status
+  let dailyStatusHtml='';
+  if(done){
+    dailyStatusHtml='<div style="font-family:var(--mono);font-size:12px;color:var(--green);text-align:center;margin-bottom:12px;">✓ Тренировка сегодня выполнена · '+dw.lastScore+' очков</div>';
+  }
 
-    <button class="daily-btn ${done?'done':''}" onclick="${done?'':'wizardOpen()'}">
-      <span class="daily-btn-icon">${done?'✓':'🧠'}</span>
-      ${done?'Тренировка выполнена':'Начать тренировку дня'}
-    </button>
-    \${done?`<div style="text-align:center;margin-top:-4px;margin-bottom:8px;">
-      <button onclick="resetDailyWorkout()" style="font-family:var(--mono);font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;padding:4px 0;">↺ сбросить тренировку дня</button>
-    </div>`:''}
+  // Daily button
+  const dailyBtnClass='daily-btn'+(done?' done':'');
+  const dailyBtnClick=done?'':'onclick="wizardOpen()"';
+  const dailyBtnIcon=done?'✓':'🧠';
+  const dailyBtnText=done?'Тренировка выполнена':'Начать тренировку дня';
 
-    <div id="homeChart"></div>
-    <div id="homeInsights"></div>`;
+  // Reset link
+  let resetLinkHtml='';
+  if(done){
+    resetLinkHtml='<div style="text-align:center;margin-top:-4px;margin-bottom:8px;"><button onclick="resetDailyWorkout()" style="font-family:var(--mono);font-size:11px;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;padding:4px 0;">↺ сбросить тренировку дня</button></div>';
+  }
+
+  container.innerHTML=
+    '<div class="home-hero">'+
+      '<div class="hero-top">'+
+        '<div class="streak-badge">'+
+          '<span style="font-size:18px;">🔥</span>'+
+          '<div>'+
+            '<div class="streak-num">'+streak.current+' <span style="font-size:11px;">дн.</span></div>'+
+            '<div class="streak-lbl">серия</div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="brain-score-wrap">'+
+          '<div class="brain-score-ring">'+
+            '<svg viewBox="0 0 90 90" width="90" height="90">'+
+              '<circle class="bsr-bg" cx="45" cy="45" r="38"/>'+
+              '<circle class="bsr-fill" cx="45" cy="45" r="38" stroke="'+scoreColor+'" stroke-dasharray="'+circumference+'" stroke-dashoffset="'+dashOffset+'"/>'+
+            '</svg>'+
+            '<div class="brain-score-val">'+
+              '<div class="brain-score-num">'+scoreDisplay+'</div>'+
+              '<div class="brain-score-sub">score</div>'+
+            '</div>'+
+          '</div>'+
+          deltaHtml+
+        '</div>'+
+      '</div>'+
+      dailyStatusHtml+
+    '</div>'+
+    '<button class="'+dailyBtnClass+'" '+dailyBtnClick+'>'+
+      '<span class="daily-btn-icon">'+dailyBtnIcon+'</span>'+
+      dailyBtnText+
+    '</button>'+
+    resetLinkHtml+
+    '<div id="homeChart"></div>'+
+    '<div id="homeInsights"></div>';
 
   renderProgressChart('homeChart', 7);
   renderInsights('homeInsights');
 }
+
 
 // ── Progress Chart ───────────────────────────────────────
 let chartRange=7;
