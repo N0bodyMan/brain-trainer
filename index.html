@@ -514,8 +514,8 @@ h1 span{color:var(--accent);}
     </div>
     <div class="game-screen" id="nbScreen">
       <div class="feedback-flash" id="nbFeedback"></div>
-      <div class="nback-sublabel" id="nbSublabel">нажмите «Старт»</div>
       <div class="nback-display" id="nbDisplay" style="color:transparent;">0</div>
+      <div class="nback-sublabel" id="nbSublabel">нажмите «Старт»</div>
       <div class="nback-history" id="nbHistory"></div>
       <div class="nback-btn-row">
         <button class="nback-btn no" id="nbNo" onclick="nbAns(false)" disabled>Нет</button>
@@ -685,6 +685,8 @@ let curDigits=[];
 let pnTimerT=null, pnPhase='idle';
 let pnStep=0;       // текущий шаг (0-4 = +1..+5)
 let pnResults=[];   // {n, correct} для итогового экрана
+let pnOrder=[1,2,3,4,5]; // shuffled order
+let pnOrderIdx=0;   // current index in pnOrder
 const PN_SHOW_MS=800; // задержка между цифрами при показе
 
 function ri(n){return Math.floor(Math.random()*n);}
@@ -753,14 +755,17 @@ function pnStart(){
 function pnBeginInput(){
   pnPhase='input';
   pnStep=0;
+  // Shuffle order: instead of 1,2,3,4,5 → random permutation
+  pnOrder=[1,2,3,4,5].sort(()=>Math.random()-.5);
+  pnOrderIdx=0;
   pnShowStep();
 }
 
 function pnShowStep(){
   const scr=document.getElementById('pnScreen');
   const num=curDigits.join('');
-  const l=plusLabels[pnStep];
-  const n=pnStep+1;
+  const n=pnOrder[pnOrderIdx]; // random order
+  const l=plusLabels[n-1];
   const ans=addN(curDigits,n);
 
   // Карточка с числом (скрытая, можно раскрыть)
@@ -781,7 +786,7 @@ function pnShowStep(){
   area.innerHTML=`
     <div style="display:flex;flex-direction:column;gap:10px;">
       <div style="display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-family:var(--mono);font-size:12px;color:var(--text3);">шаг ${n} из 5</span>
+        <span style="font-family:var(--mono);font-size:12px;color:var(--text3);">шаг ${pnOrderIdx+1} из 5</span>
         <div style="display:flex;align-items:center;gap:8px;">
           <div style="display:flex;gap:4px;">${pnResults.map(r=>`<span style="font-size:14px;">${r.correct?'✓':'✗'}</span>`).join('')}${'·'.repeat(5-pnResults.length).split('').map(()=>'<span style="font-size:14px;color:var(--text3);">·</span>').join('')}</div>
           <button onclick="pnStart()" style="font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--border2);background:var(--surface2);color:var(--text3);cursor:pointer;touch-action:manipulation;" title="Новая карточка">↺</button>
@@ -858,8 +863,8 @@ function pnSubmitStep(){
   document.querySelector('#pnInputArea .btn.primary').disabled=true;
 
   // Next step after short delay
-  pnStep++;
-  if(pnStep<5){
+  pnOrderIdx++;
+  if(pnOrderIdx<5){
     setTimeout(pnShowStep, 900);
   } else {
     setTimeout(pnShowResult, 900);
@@ -879,7 +884,9 @@ function pnShowResult(){
   const phrase=phrases[g][ri(phrases[g].length)];
 
   // Detail rows
-  const rows=pnResults.map(r=>`
+  // Sort results by n for readable table
+  const sortedResults=[...pnResults].sort((a,b)=>a.n-b.n);
+  const rows=sortedResults.map(r=>`
     <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);">
       <span class="plus-badge ${plusLabels[r.n-1].cls}">${plusLabels[r.n-1].txt}</span>
       <span style="font-family:var(--mono);font-size:13px;color:var(--text2);">твой: <strong style="color:var(--text)">${r.given}</strong></span>
@@ -1205,7 +1212,7 @@ function setNB(btn){document.querySelectorAll('.diff-btn[data-n]').forEach(b=>b.
 function nbUpdateStats(){document.getElementById('nbTotal').textContent=nbT;document.getElementById('nbRight').textContent=nbR;document.getElementById('nbWrong').textContent=nbW;}
 function nbReset(){nbStop();nbT=0;nbR=0;nbW=0;nbUpdateStats();nbIdleUI();}
 function nbIdleUI(){
-  const _nd=document.getElementById('nbDisplay');_nd.textContent='0';_nd.style.color='transparent';
+  const _nd=document.getElementById('nbDisplay');_nd.textContent='·';_nd.style.color='var(--text3)';_nd.style.fontSize='40px';
   document.getElementById('nbSublabel').textContent='нажмите «Старт»';
   document.getElementById('nbHistory').innerHTML='';
   document.getElementById('nbYes').disabled=true;
@@ -1224,13 +1231,22 @@ function nbStop(){
   document.getElementById('nbYes').disabled=true;
   document.getElementById('nbNo').disabled=true;
   document.getElementById('nbStartBtn').textContent='Старт';
+  const _nd=document.getElementById('nbDisplay');if(_nd){_nd.textContent='·';_nd.style.color='var(--text3)';_nd.style.fontSize='40px';}
 }
 function nbTick(){
   if(!nbRunning)return;
-  const num=ri(9)+1;nbSeq.push(num);
+  // ~40% chance of deliberate match (if enough history)
+  let num;
+  if(nbSeq.length>=nbN && Math.random()<0.40){
+    num=nbSeq[nbSeq.length-nbN]; // guaranteed match
+  } else {
+    // pick random but try to avoid accidental match when we want non-match
+    num=ri(9)+1;
+  }
+  nbSeq.push(num);
   const disp=document.getElementById('nbDisplay');
   disp.classList.add('flash');
-  setTimeout(()=>{disp.style.color='';disp.textContent=num;disp.classList.remove('flash');},80);
+  setTimeout(()=>{disp.style.color='';disp.style.fontSize='';disp.textContent=num;disp.classList.remove('flash');},80);
   const canAns=nbSeq.length>nbN;
   nbAnswered=false;
   document.getElementById('nbYes').disabled=!canAns;
