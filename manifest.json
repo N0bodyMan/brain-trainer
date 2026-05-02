@@ -1,6 +1,6 @@
 {
-  "name": "Тренажёр мозга",
-  "short_name": "Мозг",
+  "name": "BrainTrainer",
+  "short_name": "BrainTrainer",
   "description": "Пять упражнений на память, счёт и концентрацию",
   "start_url": "/brain-trainer/",
   "scope": "/brain-trainer/",
