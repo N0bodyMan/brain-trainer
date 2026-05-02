@@ -281,6 +281,71 @@ h1 span{color:var(--accent);}
 [data-theme="dark"] .pn-reveal-btn.shown{color:var(--accent);}
 .pn-idle{display:flex;flex-direction:column;align-items:center;gap:16px;padding:24px 0;}
 .pn-idle-num{font-family:var(--mono);font-size:13px;color:var(--text3);}
+
+/* ══ STREAK & BRAIN SCORE ══ */
+.home-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:12px;box-shadow:var(--shadow);}
+.hero-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.streak-badge{display:flex;align-items:center;gap:6px;background:var(--amber-bg);border-radius:20px;padding:6px 14px;}
+.streak-num{font-family:var(--mono);font-size:16px;font-weight:500;color:var(--amber);}
+.streak-lbl{font-size:11px;color:var(--amber);font-weight:500;}
+[data-theme="dark"] .streak-badge{background:#2e2000;}
+.brain-score-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.brain-score-ring{position:relative;width:90px;height:90px;}
+.brain-score-ring svg{transform:rotate(-90deg);}
+.brain-score-ring circle{fill:none;stroke-width:7;stroke-linecap:round;}
+.bsr-bg{stroke:var(--surface2);}
+.bsr-fill{transition:stroke-dashoffset .8s cubic-bezier(.4,0,.2,1);}
+.brain-score-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;}
+.brain-score-num{font-family:var(--mono);font-size:22px;font-weight:500;line-height:1;color:var(--text);}
+.brain-score-sub{font-size:9px;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;}
+.brain-score-delta{font-family:var(--mono);font-size:11px;padding:2px 8px;border-radius:20px;}
+.delta-up{color:var(--green);background:var(--green-bg);}
+.delta-dn{color:var(--red);background:var(--red-bg);}
+.delta-eq{color:var(--text3);background:var(--surface2);}
+
+/* ══ DAILY WORKOUT BUTTON ══ */
+.daily-btn{width:100%;font-family:var(--sans);font-size:15px;font-weight:700;padding:15px;border-radius:var(--radius);border:none;background:linear-gradient(135deg,#4f6ef7,#7c3aed);color:#fff;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:.2px;box-shadow:0 4px 16px rgba(79,110,247,0.35);touch-action:manipulation;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.daily-btn:hover{opacity:.92;}.daily-btn:active{transform:scale(.98);}
+.daily-btn.done{background:var(--surface2);color:var(--text2);box-shadow:none;cursor:default;}
+.daily-btn-icon{font-size:20px;}
+
+/* ══ INSIGHTS ══ */
+.insights-wrap{margin-bottom:12px;}
+.insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:12px 14px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px;box-shadow:var(--shadow);}
+.insight-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.insight-text{font-size:12px;color:var(--text2);line-height:1.5;}
+.insight-text strong{color:var(--text);}
+
+/* ══ PROGRESS CHART ══ */
+.chart-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.chart-title{font-size:12px;font-weight:600;color:var(--text2);letter-spacing:.3px;}
+.chart-range{display:flex;gap:4px;}
+.chart-range-btn{font-family:var(--mono);font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--border2);background:var(--surface2);color:var(--text3);cursor:pointer;transition:all .15s;}
+.chart-range-btn.on{background:var(--accent-soft);color:var(--accent-text);border-color:var(--accent);}
+[data-theme="dark"] .chart-range-btn.on{color:var(--accent);}
+.chart-svg{width:100%;overflow:visible;}
+.chart-empty{font-family:var(--mono);font-size:12px;color:var(--text3);text-align:center;padding:20px 0;}
+
+/* ══ WIZARD OVERLAY ══ */
+.wizard-overlay{position:fixed;inset:0;background:var(--bg);z-index:100;overflow-y:auto;padding:24px 16px 64px;display:none;}
+.wizard-overlay.active{display:block;}
+.wizard-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.wizard-title{font-size:15px;font-weight:600;color:var(--text);}
+.wizard-close{font-size:18px;background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;touch-action:manipulation;}
+.wizard-progress{display:flex;gap:4px;margin-bottom:20px;}
+.wizard-step-dot{flex:1;height:4px;border-radius:4px;background:var(--surface3);transition:background .3s;}
+.wizard-step-dot.done{background:var(--accent);}
+.wizard-step-dot.active{background:var(--accent);opacity:.5;}
+.wizard-step-label{font-family:var(--mono);font-size:11px;color:var(--text3);margin-bottom:16px;text-align:center;letter-spacing:.3px;}
+.wizard-content{max-width:560px;margin:0 auto;}
+.wizard-result{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;text-align:center;box-shadow:var(--shadow);}
+.wizard-score-big{font-family:var(--mono);font-size:64px;font-weight:500;line-height:1;color:var(--accent);margin:12px 0;}
+.wizard-score-lbl{font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
+.wizard-breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0;}
+.wizard-bd-card{background:var(--surface2);border-radius:var(--rsm);padding:10px 6px;text-align:center;}
+.wizard-bd-val{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--text);}
+.wizard-bd-lbl{font-size:10px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.4px;}
 </style>
 </head>
 <body>
@@ -296,6 +361,7 @@ h1 span{color:var(--accent);}
   </div>
 
   <div class="tabs">
+    <button class="tab" onclick="showExercise('tHome',this)">🏠 Главная</button>
     <button class="tab active" id="tab1" onclick="showExercise('t1',this)">Плюс N</button>
     <button class="tab" onclick="showExercise('t2',this)">Штурм</button>
     <button class="tab" onclick="showExercise('t3',this)">Обратный</button>
@@ -306,6 +372,24 @@ h1 span{color:var(--accent);}
   <!-- ══ СТАТИСТИКА ══ -->
   <div id="t0" class="pane" style="display:none;">
     <div id="statsPage"></div>
+  </div>
+
+  <!-- ══ ГЛАВНАЯ ══ -->
+  <div id="tHome" class="pane" style="display:none;">
+    <div id="homePage"></div>
+  </div>
+
+  <!-- ══ WIZARD OVERLAY ══ -->
+  <div class="wizard-overlay" id="wizardOverlay">
+    <div class="wizard-content">
+      <div class="wizard-header">
+        <div class="wizard-title" id="wizardTitle">Тренировка дня</div>
+        <button class="wizard-close" onclick="wizardClose()">✕</button>
+      </div>
+      <div class="wizard-progress" id="wizardProgress"></div>
+      <div class="wizard-step-label" id="wizardStepLabel"></div>
+      <div id="wizardBody"></div>
+    </div>
   </div>
 
   <!-- ══ ПЛЮС N ══ -->
@@ -1659,6 +1743,633 @@ function rsVkDel(){
     if(c&&c.value){c.value='';c.focus();break;}
   }
 }
+
+
+/* ════════════════════════════════════════════════════════
+   BRAIN SCORE, STREAK, DAILY WORKOUT, CHART, INSIGHTS
+════════════════════════════════════════════════════════ */
+
+// ── Brain Score formula ──────────────────────────────────
+function calcBrainScore(type, data){
+  // Returns 0-100
+  let score=0;
+  if(type==='ms'){
+    // accuracy 0-70 + speed bonus up to 30 (more correct per sec = better)
+    const acc=(data.right||0)/(data.total||1);
+    const speed=Math.min((data.right||0)/(data.sec||60)*6,1);
+    score=acc*70+speed*30;
+  } else if(type==='rs'){
+    // level 3-8 → 0-60, accuracy → 0-40
+    const lvl=Math.min(Math.max((data.maxLevel||3)-3,0),5)/5;
+    const acc=(data.right||0)/(data.total||1);
+    score=lvl*60+acc*40;
+  } else if(type==='nb'){
+    // accuracy 0-80 + n-level bonus 0-20
+    const acc=(data.right||0)/(data.total||1);
+    const nBonus=((data.n||2)-1)/2;
+    score=acc*80+nBonus*20;
+  } else if(type==='ch'){
+    const acc=(data.right||0)/(data.total||1);
+    const stepBonus=Math.min(((data.steps||4)-3)/2,1);
+    score=acc*75+stepBonus*25;
+  }
+  return Math.round(Math.min(100,Math.max(0,score)));
+}
+
+function getOverallBrainScore(){
+  const s=getStat();
+  const scores=[];
+  if(s.ms.length){const l=s.ms[s.ms.length-1];scores.push(calcBrainScore('ms',l));}
+  if(s.rs.length){const l=s.rs[s.rs.length-1];scores.push(calcBrainScore('rs',l));}
+  if(s.nb.length){const l=s.nb[s.nb.length-1];scores.push(calcBrainScore('nb',l));}
+  if(s.ch.length){const l=s.ch[s.ch.length-1];scores.push(calcBrainScore('ch',l));}
+  if(!scores.length)return null;
+  return Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
+}
+
+function saveBrainScoreHistory(score){
+  const key='brainScoreHistory';
+  let hist=SS.get(key)||[];
+  const today=todayStr();
+  // Update or add today's entry
+  const idx=hist.findIndex(e=>e.date===today);
+  if(idx>=0)hist[idx].score=score;
+  else hist.push({date:today,score});
+  // Keep last 60 days
+  if(hist.length>60)hist=hist.slice(-60);
+  SS.set(key,hist);
+}
+
+// ── Streak ───────────────────────────────────────────────
+function todayStr(){return new Date().toISOString().slice(0,10);}
+
+function getStreak(){return SS.get('streak')||{current:0,best:0,lastDate:''};}
+function updateStreak(){
+  const s=getStreak();
+  const today=todayStr();
+  if(s.lastDate===today)return s; // already updated today
+  const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10);
+  if(s.lastDate===yesterday){
+    s.current++;
+  } else if(s.lastDate!==today){
+    s.current=1;
+  }
+  s.best=Math.max(s.best,s.current);
+  s.lastDate=today;
+  SS.set('streak',s);
+  return s;
+}
+
+// ── Daily Workout ────────────────────────────────────────
+function getDailyWorkout(){return SS.get('dailyWorkout')||{lastDate:'',lastScore:0,history:[]};}
+function isDailyDone(){return getDailyWorkout().lastDate===todayStr();}
+
+// Wizard state
+let wiz={step:0,results:{},steps:['ms','rs','nb']};
+const wizStepNames={ms:'⚡ Числовой штурм',rs:'🔁 Обратный порядок',nb:'🔢 N-back'};
+const wizStepDuration={ms:60,rs:1,nb:30}; // seconds or rounds
+
+function wizardOpen(){
+  if(isDailyDone()){
+    // Show today's result
+    renderHomePage();
+    return;
+  }
+  wiz={step:0,results:{},steps:['ms','rs','nb']};
+  document.getElementById('wizardOverlay').classList.add('active');
+  wizRenderStep();
+}
+
+function wizardClose(){
+  // Stop any running exercises
+  stopCurrentExercise();
+  document.getElementById('wizardOverlay').classList.remove('active');
+}
+
+function wizRenderProgress(){
+  const prog=document.getElementById('wizardProgress');
+  prog.innerHTML=wiz.steps.map((s,i)=>`<div class="wizard-step-dot ${i<wiz.step?'done':i===wiz.step?'active':''}"></div>`).join('');
+  document.getElementById('wizardStepLabel').textContent=`Шаг ${wiz.step+1} из ${wiz.steps.length} — ${wizStepNames[wiz.steps[wiz.step]]}`;
+}
+
+function wizRenderStep(){
+  wizRenderProgress();
+  const stepKey=wiz.steps[wiz.step];
+  const body=document.getElementById('wizardBody');
+
+  if(stepKey==='ms'){
+    // Inject math storm UI into wizard body
+    body.innerHTML=`
+      <div class="game-screen" id="wizMsScreen" style="min-height:180px;">
+        <div class="feedback-flash" id="wizMsFeedback"></div>
+        <div class="math-q-text" id="wizMsQ"><span class="idle-msg">нажмите «Старт»</span></div>
+        <div class="timer-wrap" id="wizMsTimer" style="display:none">
+          <div class="timer-bar-bg"><div class="timer-bar-fill" id="wizMsBar" style="width:100%"></div></div>
+          <div class="timer-text" id="wizMsTimerTxt">—</div>
+        </div>
+        <button class="screen-start-btn" id="wizMsStartBtn" onclick="wizMsStart()">Старт</button>
+      </div>
+      <div class="ans-input-row" style="margin-top:12px;">
+        <button class="sign-btn" id="wizSignBtn" onclick="wizToggleSign()" disabled>±</button>
+        <input type="text" inputmode="decimal" class="math-ans-input" id="wizMsInput" placeholder="ответ" disabled autocomplete="off">
+        <button class="btn primary" id="wizMsOk" onclick="wizMsSubmit()" disabled><span class="btn-ring" id="wizMsRing"></span>ОК</button>
+      </div>`;
+  } else if(stepKey==='rs'){
+    body.innerHTML=`
+      <div class="game-screen" id="wizRsScreen" style="min-height:180px;">
+        <div class="feedback-flash" id="wizRsFeedback"></div>
+        <div class="span-level" id="wizRsLevel">уровень — 3 цифры</div>
+        <div class="span-seq-display" id="wizRsSeq"><span class="idle-msg">нажмите «Старт»</span></div>
+        <div class="span-input-row" id="wizRsInputRow" style="display:none"></div>
+        <button class="screen-start-btn" id="wizRsStartBtn" onclick="wizRsBegin()">Старт</button>
+      </div>`;
+  } else if(stepKey==='nb'){
+    body.innerHTML=`
+      <div class="game-screen" id="wizNbScreen" style="min-height:220px;">
+        <div class="feedback-flash" id="wizNbFeedback"></div>
+        <div class="nback-display" id="wizNbDisplay" style="color:transparent;">0</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;">
+          <div class="nback-sublabel" id="wizNbLabel">нажмите «Старт»</div>
+        </div>
+        <div class="nback-history" id="wizNbHistory"></div>
+        <div class="nback-btn-row">
+          <button class="nback-btn no" id="wizNbNo" onclick="wizNbAns(false)" disabled>Нет</button>
+          <button class="nback-btn yes" id="wizNbYes" onclick="wizNbAns(true)" disabled>Совпадает!</button>
+        </div>
+        <button class="screen-start-btn" id="wizNbStartBtn" onclick="wizNbStart()">Старт</button>
+      </div>`;
+  }
+}
+
+function wizNextStep(result){
+  wiz.results[wiz.steps[wiz.step]]=result;
+  wiz.step++;
+  if(wiz.step>=wiz.steps.length){
+    wizShowResult();
+  } else {
+    wizRenderStep();
+  }
+}
+
+function wizShowResult(){
+  wizRenderProgress();
+  document.getElementById('wizardStepLabel').textContent='Тренировка завершена!';
+
+  // Calc scores
+  const msR=wiz.results.ms||{right:0,total:0,sec:60};
+  const rsR=wiz.results.rs||{maxLevel:3,right:0,total:0};
+  const nbR=wiz.results.nb||{right:0,total:0,n:2};
+
+  const msScore=calcBrainScore('ms',msR);
+  const rsScore=calcBrainScore('rs',rsR);
+  const nbScore=calcBrainScore('nb',nbR);
+  const total=Math.round((msScore+rsScore+nbScore)/3);
+
+  // Save daily workout
+  const dw=getDailyWorkout();
+  dw.lastDate=todayStr();
+  dw.lastScore=total;
+  dw.history=dw.history||[];
+  dw.history.push({date:todayStr(),score:total});
+  if(dw.history.length>60)dw.history=dw.history.slice(-60);
+  SS.set('dailyWorkout',dw);
+
+  // Update streak
+  updateStreak();
+
+  // Save brain score history
+  saveBrainScoreHistory(total);
+
+  // Push to global stat
+  if(msR.total)pushStat('ms',{...msR,pct:msR.total?msR.right/msR.total:0});
+  if(rsR.total)pushStat('rs',{...rsR,pct:rsR.total?rsR.right/rsR.total:0});
+  if(nbR.total)pushStat('nb',{...nbR,pct:nbR.total?nbR.right/nbR.total:0});
+
+  document.getElementById('wizardBody').innerHTML=`
+    <div class="wizard-result">
+      <div class="wizard-score-lbl">Brain Score сегодня</div>
+      <div class="wizard-score-big">${total}</div>
+      <div class="wizard-breakdown">
+        <div class="wizard-bd-card"><div class="wizard-bd-val">${msScore}</div><div class="wizard-bd-lbl">Штурм</div></div>
+        <div class="wizard-bd-card"><div class="wizard-bd-val">${rsScore}</div><div class="wizard-bd-lbl">Обратный</div></div>
+        <div class="wizard-bd-card"><div class="wizard-bd-val">${nbScore}</div><div class="wizard-bd-lbl">N-back</div></div>
+      </div>
+      <button class="daily-btn" onclick="wizardClose();renderHomePage();" style="margin-top:8px;">Готово</button>
+    </div>`;
+}
+
+// ── Wizard: Math Storm mini ──────────────────────────────
+let wizMs={running:false,timer:null,left:0,total:0,right:0,wrong:0,ans:0,neg:false,debT:null};
+const WIZ_MS_SEC=60;
+const WIZ_MS_DB=600;
+
+function wizMsStart(){
+  wizMs={running:true,timer:null,left:WIZ_MS_SEC,total:0,right:0,wrong:0,ans:0,neg:false,debT:null};
+  document.getElementById('wizMsStartBtn').style.display='none';
+  document.getElementById('wizMsTimer').style.display='block';
+  document.getElementById('wizMsInput').disabled=false;
+  document.getElementById('wizSignBtn').disabled=false;
+  document.getElementById('wizMsOk').disabled=false;
+  document.getElementById('wizMsInput').addEventListener('input',wizMsOnInput);
+  document.getElementById('wizMsInput').addEventListener('keydown',e=>{if(e.key==='Enter'){clearTimeout(wizMs.debT);wizMsSubmit();}});
+  wizMsNextQ();
+  wizMs.timer=setInterval(()=>{
+    wizMs.left-=0.1;
+    const pct=Math.max(0,wizMs.left/WIZ_MS_SEC*100);
+    const bar=document.getElementById('wizMsBar');
+    const txt=document.getElementById('wizMsTimerTxt');
+    if(!bar){clearInterval(wizMs.timer);return;}
+    bar.style.width=pct+'%';
+    bar.style.background=pct>50?'var(--accent)':pct>20?'#f0a020':'#e84050';
+    if(txt)txt.textContent=Math.max(0,wizMs.left).toFixed(1)+' сек';
+    if(wizMs.left<=0){clearInterval(wizMs.timer);wizMsDone();}
+  },100);
+}
+
+function wizMsNextQ(){
+  const q=genQ();wizMs.ans=q.ans;
+  const el=document.getElementById('wizMsQ');
+  if(el)el.textContent=q.qs+' = ?';
+  const inp=document.getElementById('wizMsInput');
+  if(inp){inp.value='';wizMs.neg=false;inp.focus();}
+}
+
+function wizMsOnInput(e){
+  let v=e.target.value.replace(/[^0-9\-]/g,'').replace(/(?!^)-/g,'');
+  e.target.value=v;wizMs.neg=v.startsWith('-');
+  clearTimeout(wizMs.debT);
+  if(!wizMs.running||!v||v==='-')return;
+  wizMs.debT=setTimeout(wizMsSubmit,WIZ_MS_DB);
+}
+
+function wizToggleSign(){
+  if(!wizMs.running)return;
+  const inp=document.getElementById('wizMsInput');
+  wizMs.neg=!wizMs.neg;
+  const raw=inp.value.replace(/^-/,'');
+  inp.value=wizMs.neg&&raw?'-'+raw:raw;
+  inp.focus();
+}
+
+function wizMsSubmit(){
+  if(!wizMs.running)return;
+  const val=parseInt(document.getElementById('wizMsInput').value,10);
+  if(isNaN(val))return;
+  clearTimeout(wizMs.debT);
+  wizMs.total++;
+  const ok=val===wizMs.ans;
+  if(ok)wizMs.right++;else wizMs.wrong++;
+  flash('wizMsFeedback',ok,wizMs.ans);
+  wizMsNextQ();
+}
+
+function wizMsDone(){
+  wizMs.running=false;
+  wizNextStep({right:wizMs.right,total:wizMs.total,wrong:wizMs.wrong,sec:WIZ_MS_SEC});
+}
+
+// ── Wizard: Reverse Span mini ────────────────────────────
+let wizRs={level:3,seq:[],phase:'idle',right:0,total:0,showTimer:null};
+
+function wizRsBegin(){
+  wizRs.phase='show';
+  wizRs.seq=Array.from({length:wizRs.level},()=>ri(10));
+  document.getElementById('wizRsLevel').textContent=`уровень — ${wizRs.level} цифр`;
+  document.getElementById('wizRsStartBtn').style.display='none';
+  const disp=document.getElementById('wizRsSeq');disp.innerHTML='';
+  wizRs.seq.forEach((_,i)=>{
+    const sp=document.createElement('span');
+    sp.className='span-digit';sp.id='wzrsd'+i;sp.textContent='·';
+    disp.appendChild(sp);
+  });
+  let i=0;
+  (function show(){
+    if(wizRs.phase!=='show')return;
+    if(i>0){const prev=document.getElementById('wzrsd'+(i-1));if(prev)prev.classList.remove('visible');}
+    if(i<wizRs.seq.length){
+      const el=document.getElementById('wzrsd'+i);
+      if(el){el.textContent=wizRs.seq[i];el.classList.add('visible');}
+      i++;wizRs.showTimer=setTimeout(show,650);
+    } else {wizRs.showTimer=setTimeout(wizRsAskInput,350);}
+  })();
+}
+
+function wizRsAskInput(){
+  if(wizRs.phase!=='show')return;
+  wizRs.phase='input';
+  const disp=document.getElementById('wizRsSeq');
+  disp.innerHTML='<span style="font-family:var(--mono);font-size:13px;color:var(--text3)">обратный порядок →</span>';
+  const row=document.getElementById('wizRsInputRow');row.style.display='flex';row.innerHTML='';
+  for(let i=0;i<wizRs.level;i++){
+    const inp=document.createElement('input');
+    inp.type='text';inp.inputMode='numeric';inp.maxLength=1;
+    inp.className='span-cell';inp.id='wzrsi'+i;
+    const idx=i;
+    inp.addEventListener('input',e=>{
+      e.target.value=e.target.value.replace(/[^0-9]/g,'').slice(-1);
+      if(e.target.value&&idx<wizRs.level-1)document.getElementById('wzrsi'+(idx+1)).focus();
+      if(idx===wizRs.level-1&&e.target.value)setTimeout(wizRsCheck,120);
+    });
+    inp.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!e.target.value&&idx>0)document.getElementById('wzrsi'+(idx-1)).focus();});
+    row.appendChild(inp);
+  }
+  const chk=document.createElement('button');
+  chk.className='btn primary';chk.textContent='✓';chk.style.cssText='padding:0 14px;font-size:18px;';
+  chk.onclick=wizRsCheck;row.appendChild(chk);
+  document.getElementById('wzrsi0').focus();
+}
+
+function wizRsCheck(){
+  if(wizRs.phase!=='input')return;wizRs.phase='checking';
+  const rev=[...wizRs.seq].reverse();let ok=true;
+  for(let i=0;i<wizRs.level;i++){
+    const inp=document.getElementById('wzrsi'+i);
+    const correct=inp&&parseInt(inp.value,10)===rev[i];
+    if(inp)inp.classList.add(correct?'correct':'wrong');
+    if(!correct)ok=false;
+  }
+  wizRs.total++;
+  if(ok){wizRs.right++;if(wizRs.level<8)wizRs.level++;}
+  else{if(wizRs.level>3)wizRs.level--;}
+  flash('wizRsFeedback',ok,rev.join('·'));
+  setTimeout(()=>{
+    // After 1 round in wizard → done
+    wizNextStep({maxLevel:wizRs.level,right:wizRs.right,total:wizRs.total,wrong:wizRs.total-wizRs.right,pct:wizRs.right/wizRs.total});
+  },1200);
+}
+
+// ── Wizard: N-back mini ──────────────────────────────────
+let wizNb={seq:[],running:false,timer:null,answered:false,right:0,wrong:0,total:0,left:0};
+const WIZ_NB_SEC=30;
+const WIZ_NB_INTERVAL=2000;
+
+function wizNbStart(){
+  wizNb={seq:[],running:true,timer:null,answered:false,right:0,wrong:0,total:0,left:WIZ_NB_SEC};
+  document.getElementById('wizNbStartBtn').style.display='none';
+  // Timer bar — inject
+  const scr=document.getElementById('wizNbScreen');
+  const barDiv=document.createElement('div');
+  barDiv.className='timer-wrap';barDiv.id='wizNbTimerWrap';
+  barDiv.innerHTML='<div class="timer-bar-bg"><div class="timer-bar-fill" id="wizNbBar" style="width:100%"></div></div><div class="timer-text" id="wizNbTimerTxt">—</div>';
+  scr.insertBefore(barDiv, document.getElementById('wizNbHistory'));
+  wizNbTick();
+  wizNb.countdownTimer=setInterval(()=>{
+    wizNb.left-=0.1;
+    const pct=Math.max(0,wizNb.left/WIZ_NB_SEC*100);
+    const bar=document.getElementById('wizNbBar');
+    const txt=document.getElementById('wizNbTimerTxt');
+    if(!bar){clearInterval(wizNb.countdownTimer);return;}
+    bar.style.width=pct+'%';
+    bar.style.background=pct>50?'var(--accent)':pct>20?'#f0a020':'#e84050';
+    if(txt)txt.textContent=Math.max(0,wizNb.left).toFixed(1)+' сек';
+    if(wizNb.left<=0){clearInterval(wizNb.countdownTimer);clearTimeout(wizNb.timer);wizNbDone();}
+  },100);
+}
+
+function wizNbTick(){
+  if(!wizNb.running)return;
+  let num;
+  if(wizNb.seq.length>=2&&Math.random()<0.30)num=wizNb.seq[wizNb.seq.length-2];
+  else num=ri(9)+1;
+  wizNb.seq.push(num);
+  const disp=document.getElementById('wizNbDisplay');
+  if(!disp)return;
+  disp.classList.add('flash');
+  setTimeout(()=>{disp.style.color='';disp.style.fontSize='';disp.textContent=num;disp.classList.remove('flash');},80);
+  const canAns=wizNb.seq.length>2;
+  wizNb.answered=false;
+  document.getElementById('wizNbYes').disabled=!canAns;
+  document.getElementById('wizNbNo').disabled=!canAns;
+  const lbl=document.getElementById('wizNbLabel');
+  if(lbl)lbl.textContent=canAns?'совпадает с 2 шага назад?':'запоминай...';
+  wizNb.timer=setTimeout(()=>{
+    if(canAns&&!wizNb.answered){
+      const isMatch=wizNb.seq[wizNb.seq.length-1]===wizNb.seq[wizNb.seq.length-3];
+      if(isMatch){wizNb.total++;wizNb.wrong++;wizNbDot('err');}
+    }
+    wizNbTick();
+  },WIZ_NB_INTERVAL);
+}
+
+function wizNbAns(yes){
+  if(!wizNb.running||wizNb.answered||wizNb.seq.length<=2)return;
+  wizNb.answered=true;
+  document.getElementById('wizNbYes').disabled=true;document.getElementById('wizNbNo').disabled=true;
+  const isMatch=wizNb.seq[wizNb.seq.length-1]===wizNb.seq[wizNb.seq.length-3];
+  const ok=(yes===isMatch);
+  wizNb.total++;if(ok)wizNb.right++;else wizNb.wrong++;
+  flash('wizNbFeedback',ok,isMatch?'совпадение':'не совпадение');
+  wizNbDot(ok?'ok':'err');
+}
+
+function wizNbDot(cls){
+  const h=document.getElementById('wizNbHistory');if(!h)return;
+  const d=document.createElement('div');d.className='nback-dot '+cls;h.appendChild(d);h.scrollLeft=h.scrollWidth;
+}
+
+function wizNbDone(){
+  wizNb.running=false;
+  clearTimeout(wizNb.timer);
+  document.getElementById('wizNbYes').disabled=true;
+  document.getElementById('wizNbNo').disabled=true;
+  wizNextStep({right:wizNb.right,total:wizNb.total,wrong:wizNb.wrong,n:2,pct:wizNb.total?wizNb.right/wizNb.total:0});
+}
+
+// ── Home Page ────────────────────────────────────────────
+function renderHomePage(){
+  const container=document.getElementById('homePage');if(!container)return;
+  const streak=getStreak();
+  const dw=getDailyWorkout();
+  const done=isDailyDone();
+  const score=getOverallBrainScore();
+  const hist=SS.get('brainScoreHistory')||[];
+  const prevScore=hist.length>=2?hist[hist.length-2]?.score:null;
+  const delta=score!==null&&prevScore!==null?score-prevScore:null;
+  const deltaHtml=delta===null?'':`<span class="brain-score-delta ${delta>0?'delta-up':delta<0?'delta-dn':'delta-eq'}">${delta>0?'+':''}${delta}</span>`;
+  const scoreColor=score===null?'#9aa0ad':score>=75?'#1a6e4a':score>=50?'#8a5800':'#9b1c2a';
+  const circumference=2*Math.PI*38;
+  const dashOffset=score===null?circumference:circumference*(1-(score/100));
+
+  container.innerHTML=`
+    <div class="home-hero">
+      <div class="hero-top">
+        <div class="streak-badge">
+          <span style="font-size:18px;">🔥</span>
+          <div>
+            <div class="streak-num">${streak.current} <span style="font-size:11px;">дн.</span></div>
+            <div class="streak-lbl">серия</div>
+          </div>
+        </div>
+        <div class="brain-score-wrap">
+          <div class="brain-score-ring">
+            <svg viewBox="0 0 90 90" width="90" height="90">
+              <circle class="bsr-bg" cx="45" cy="45" r="38"/>
+              <circle class="bsr-fill" cx="45" cy="45" r="38"
+                stroke="${scoreColor}"
+                stroke-dasharray="${circumference}"
+                stroke-dashoffset="${dashOffset}"/>
+            </svg>
+            <div class="brain-score-val">
+              <div class="brain-score-num">${score??'—'}</div>
+              <div class="brain-score-sub">score</div>
+            </div>
+          </div>
+          ${deltaHtml}
+        </div>
+      </div>
+      ${done?`<div style="font-family:var(--mono);font-size:12px;color:var(--green);text-align:center;margin-bottom:12px;">✓ Тренировка сегодня выполнена · ${dw.lastScore} очков</div>`:''}
+    </div>
+
+    <button class="daily-btn ${done?'done':''}" onclick="${done?'':'wizardOpen()'}">
+      <span class="daily-btn-icon">${done?'✓':'🧠'}</span>
+      ${done?'Тренировка выполнена':'Начать тренировку дня'}
+    </button>
+
+    <div id="homeChart"></div>
+    <div id="homeInsights"></div>`;
+
+  renderProgressChart('homeChart', 7);
+  renderInsights('homeInsights');
+}
+
+// ── Progress Chart ───────────────────────────────────────
+let chartRange=7;
+function renderProgressChart(containerId, days){
+  chartRange=days;
+  const container=document.getElementById(containerId);if(!container)return;
+  const hist=SS.get('brainScoreHistory')||[];
+  if(hist.length<2){
+    container.innerHTML=`<div class="chart-wrap"><div class="chart-empty">Сыграй хотя бы 2 дня чтобы увидеть график</div></div>`;
+    return;
+  }
+  // Get last N days
+  const today=todayStr();
+  const dates=[];
+  for(let i=days-1;i>=0;i--){
+    const d=new Date(Date.now()-i*86400000).toISOString().slice(0,10);
+    dates.push(d);
+  }
+  const points=dates.map(d=>{
+    const entry=hist.find(e=>e.date===d);
+    return entry?entry.score:null;
+  });
+  const hasData=points.some(p=>p!==null);
+  if(!hasData){container.innerHTML=`<div class="chart-wrap"><div class="chart-empty">Нет данных за этот период</div></div>`;return;}
+
+  const W=320,H=80,pad=8;
+  const vals=points.filter(p=>p!==null);
+  const minV=Math.max(0,Math.min(...vals)-10);
+  const maxV=Math.min(100,Math.max(...vals)+10);
+  const scaleY=v=>(1-(v-minV)/(maxV-minV||1))*(H-pad*2)+pad;
+
+  // Build path — only connect non-null points
+  let pathD='',first=true;
+  const dotHtml=[];
+  points.forEach((v,i)=>{
+    if(v===null)return;
+    const x=pad+(i/(dates.length-1||1))*(W-pad*2);
+    const y=scaleY(v);
+    pathD+=(first?`M${x},${y}`:`L${x},${y}`);
+    first=false;
+    dotHtml.push(`<circle cx="${x}" cy="${y}" r="3" fill="var(--accent)"/><title>${dates[i]}: ${v}</title>`);
+  });
+
+  // Area fill
+  const areaD=pathD+`L${pad+(dates.length-1)/(dates.length-1||1)*(W-pad*2)},${H}L${pad},${H}Z`;
+
+  container.innerHTML=`
+    <div class="chart-wrap">
+      <div class="chart-header">
+        <div class="chart-title">📈 Brain Score</div>
+        <div class="chart-range">
+          <button class="chart-range-btn ${days===7?'on':''}" onclick="renderProgressChart('${containerId}',7)">7д</button>
+          <button class="chart-range-btn ${days===30?'on':''}" onclick="renderProgressChart('${containerId}',30)">30д</button>
+        </div>
+      </div>
+      <svg class="chart-svg" viewBox="0 0 ${W} ${H}" height="${H}">
+        <defs>
+          <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="var(--accent)" stop-opacity=".25"/>
+            <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path d="${areaD}" fill="url(#chartGrad)"/>
+        <path d="${pathD}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        ${dotHtml.join('')}
+        <text x="${pad}" y="${H}" font-family="monospace" font-size="9" fill="var(--text3)">${dates[0].slice(5)}</text>
+        <text x="${W-pad}" y="${H}" font-family="monospace" font-size="9" fill="var(--text3)" text-anchor="end">${dates[dates.length-1].slice(5)}</text>
+      </svg>
+    </div>`;
+}
+
+// ── Insights ─────────────────────────────────────────────
+function renderInsights(containerId){
+  const container=document.getElementById(containerId);if(!container)return;
+  const s=getStat();
+  const insights=[];
+  const hist=SS.get('brainScoreHistory')||[];
+
+  // Trend insight
+  if(hist.length>=3){
+    const last3=hist.slice(-3).map(e=>e.score);
+    const trend=last3[2]-last3[0];
+    if(trend>=10)insights.push({icon:'📈',text:`Brain Score вырос на <strong>+${trend}</strong> за последние дни — отличная динамика!`});
+    else if(trend<=-10)insights.push({icon:'📉',text:`Brain Score снизился на <strong>${trend}</strong>. Попробуй пройти тренировку дня.`});
+    else insights.push({icon:'➡️',text:'Brain Score стабилен. Попробуй увеличить сложность упражнений.'});
+  }
+
+  // Best exercise
+  const exScores=[];
+  if(s.ms.length){const l=s.ms[s.ms.length-1];exScores.push({name:'Числовой штурм',score:calcBrainScore('ms',l)});}
+  if(s.rs.length){const l=s.rs[s.rs.length-1];exScores.push({name:'Обратный порядок',score:calcBrainScore('rs',l)});}
+  if(s.nb.length){const l=s.nb[s.nb.length-1];exScores.push({name:'N-back',score:calcBrainScore('nb',l)});}
+  if(s.ch.length){const l=s.ch[s.ch.length-1];exScores.push({name:'Цепочки',score:calcBrainScore('ch',l)});}
+
+  if(exScores.length>=2){
+    const best=exScores.reduce((a,b)=>a.score>b.score?a:b);
+    const worst=exScores.reduce((a,b)=>a.score<b.score?a:b);
+    insights.push({icon:'💪',text:`Сильнее всего: <strong>${best.name}</strong> (${best.score} очков).`});
+    if(worst.score<50)insights.push({icon:'🎯',text:`Подтяни <strong>${worst.name}</strong> — там есть куда расти (${worst.score} очков).`});
+  }
+
+  // Streak insight
+  const streak=getStreak();
+  if(streak.current>=7)insights.push({icon:'🔥',text:`<strong>${streak.current} дней подряд</strong> — отличная серия! Рекорд: ${streak.best} дн.`});
+  else if(streak.current===0)insights.push({icon:'⚡',text:'Начни тренировку дня чтобы начать серию!'});
+
+  if(!insights.length){
+    container.innerHTML='';return;
+  }
+  container.innerHTML=`<div class="insights-wrap">${insights.slice(0,3).map(i=>`
+    <div class="insight-card">
+      <span class="insight-icon">${i.icon}</span>
+      <span class="insight-text">${i.text}</span>
+    </div>`).join('')}</div>`;
+}
+
+// ── Hook into stoppers ───────────────────────────────────
+stoppers.tHome=()=>{};
+
+// ── Show home on load or if first visit ─────────────────
+// Re-render home when switching to it
+const _origShowExercise=showExercise;
+showExercise=function(id,btn){
+  _origShowExercise(id,btn);
+  if(id==='tHome')renderHomePage();
+};
+
+// Also update stats page to show brain score
+const _origRenderStats=renderStatsPage;
+renderStatsPage=function(){
+  _origRenderStats();
+  // Append brain score history chart to stats
+  const sp=document.getElementById('statsPage');
+  if(!sp)return;
+  const chartDiv=document.createElement('div');
+  chartDiv.id='statsChartWrap';
+  sp.insertBefore(chartDiv,sp.firstChild);
+  renderProgressChart('statsChartWrap',30);
+};
 
 </script>
 </body>
