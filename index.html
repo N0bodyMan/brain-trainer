@@ -931,7 +931,7 @@ function pnSubmitStep(){
   if(!inp)return;
   const val=inp.value.trim();
   if(!val)return;
-  const n=pnStep+1;
+  const n=pnOrder[pnOrderIdx]; // use shuffled order, not sequential
   const ans=addN(curDigits,n);
   const correct=val===ans;
   pnResults.push({n,correct,ans,given:val});
