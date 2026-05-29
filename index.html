@@ -43,6 +43,7 @@ h1 span{color:var(--accent);}
 .theme-btn{background:var(--surface);border:1px solid var(--border2);border-radius:50%;width:36px;height:36px;font-size:16px;color:var(--text2);cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);padding:0;}
 .theme-btn:hover{color:var(--text);border-color:var(--accent);}
 .stats-top-btn{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:7px 14px;font-family:var(--sans);font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;box-shadow:var(--shadow);}
+#settingsBtnTop{padding:7px 12px;font-size:15px;}
 .stats-top-btn:hover{color:var(--text);border-color:var(--accent);}
 .stats-top-btn.active{background:var(--accent-soft);color:var(--accent-text);border-color:var(--accent);}
 [data-theme="dark"] .stats-top-btn.active{color:var(--accent);}
@@ -347,6 +348,60 @@ h1 span{color:var(--accent);}
 .wizard-bd-val{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--text);}
 .wizard-bd-lbl{font-size:10px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.4px;}
 #tabHome{flex:0 0 36px;font-size:16px;padding:6px 0;}
+
+/* ══ SETTINGS PAGE ══ */
+.settings-page { display: flex; flex-direction: column; gap: 12px; }
+.settings-section {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow);
+}
+.settings-section-title {
+  font-size: 11px; font-weight: 600; color: var(--text3);
+  letter-spacing: .6px; text-transform: uppercase; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 7px;
+}
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+}
+.settings-row:last-child { border-bottom: none; padding-bottom: 0; }
+.settings-row-info { display: flex; flex-direction: column; gap: 3px; flex: 1; min-width: 0; padding-right: 16px; }
+.settings-row-label { font-size: 14px; font-weight: 500; color: var(--text); }
+.settings-row-desc { font-size: 12px; color: var(--text3); line-height: 1.4; }
+
+/* Toggle switch */
+.toggle-wrap { position: relative; flex-shrink: 0; }
+.toggle-input { position: absolute; opacity: 0; width: 0; height: 0; }
+.toggle-label {
+  display: block; width: 48px; height: 28px; background: var(--surface3);
+  border-radius: 20px; cursor: pointer; transition: background .2s;
+  position: relative;
+}
+.toggle-label::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 22px; height: 22px; border-radius: 50%; background: white;
+  transition: transform .2s; box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+.toggle-input:checked + .toggle-label { background: var(--accent); }
+.toggle-input:checked + .toggle-label::after { transform: translateX(20px); }
+
+/* Debounce slider */
+.debounce-val {
+  font-family: var(--mono); font-size: 13px; font-weight: 500;
+  color: var(--accent); min-width: 44px; text-align: right;
+}
+.range-wrap { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.range-input {
+  flex: 1; -webkit-appearance: none; height: 4px;
+  background: var(--surface3); border-radius: 4px; outline: none;
+}
+.range-input::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px;
+  border-radius: 50%; background: var(--accent); cursor: pointer;
+  box-shadow: 0 1px 4px rgba(79,110,247,.3);
+}
+.range-lbl { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+
 </style>
 </head>
 <body>
@@ -355,9 +410,7 @@ h1 span{color:var(--accent);}
     <h1>тренажёр <span>мозга</span></h1>
     <div class="top-bar-right">
       <button class="stats-top-btn" id="statsBtnTop" onclick="showStats(this)">📊 Статистика</button>
-      <button class="theme-btn" onclick="toggleTheme()" title="Сменить тему">
-        <span id="themeIcon">☽</span>
-      </button>
+      <button class="stats-top-btn" id="settingsBtnTop" onclick="showSettingsPage(this)" title="Настройки">⚙</button>
     </div>
   </div>
 
@@ -378,6 +431,12 @@ h1 span{color:var(--accent);}
   <!-- ══ ГЛАВНАЯ ══ -->
   <div id="tHome" class="pane" style="display:block;">
     <div id="homePage"></div>
+  </div>
+
+
+  <!-- ══ НАСТРОЙКИ ══ -->
+  <div id="tSettings" class="pane" style="display:none;">
+    <div class="settings-page" id="settingsPage"></div>
   </div>
 
   <!-- ══ WIZARD OVERLAY ══ -->
@@ -715,8 +774,13 @@ function pushStat(key,entry){const s=getStat();s[key].push({...entry,ts:Date.now
 ══════════════════════════════ */
 function toggleTheme(){
   const h=document.documentElement,dark=h.getAttribute('data-theme')==='dark';
-  h.setAttribute('data-theme',dark?'light':'dark');
+  const newTheme=dark?'light':'dark';
+  h.setAttribute('data-theme',newTheme);
   document.getElementById('themeIcon').textContent=dark?'☽':'☀';
+  SS.set('theme',newTheme);
+  // Sync settings toggle if open
+  const tog=document.getElementById('settingThemeToggle');
+  if(tog)tog.checked=newTheme==='dark';
 }
 
 // Стоп-функции каждого упражнения — вызываются при переключении вкладки
@@ -1043,7 +1107,8 @@ function showResult(screenId,right,total,wrong,sub,restartFn){
 ══════════════════════════════ */
 let msRunning=false,msTimer=null,msLeft=0,msTotal_t=0;
 let msT=0,msR=0,msW=0,msAns=0,msDiff='medium';
-let msDebT=null;const MS_DB=600;
+let msDebT=null;let MS_DB=600; // controlled by settings
+let autoAcceptEnabled=true; // controlled by settings
 let msNeg=false; // is current input negative
 let msAllowNeg=true; // allow negative answers
 
@@ -1096,6 +1161,7 @@ function triggerMsDebounce(inp){
   const btn=document.getElementById('submitBtn');
   const v=inp.value;
   if(!msRunning||v===''||v==='-'){inp.classList.remove('debouncing');btn.classList.remove('counting');return;}
+  if(!autoAcceptEnabled){inp.classList.remove('debouncing');btn.classList.remove('counting');return;}
   inp.classList.add('debouncing');btn.classList.remove('counting');
   btn.style.setProperty('--debounce-ms',MS_DB+'ms');
   void btn.offsetWidth;btn.classList.add('counting');
@@ -1399,7 +1465,7 @@ function nbDot(cls){
    ЦЕПОЧКИ
 ══════════════════════════════ */
 let chDiff='easy',chSteps=4,chT=0,chR=0,chW=0,chAns=0,chRunning=false,chDebT=null,chNeg=false;
-const CH_DB=700;
+let CH_DB=700; // controlled by settings
 function setChDiff(btn){document.querySelectorAll('.diff-btn[data-chdiff]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');chDiff=btn.dataset.chdiff;}
 function setChSteps(btn){document.querySelectorAll('.diff-btn[data-steps]').forEach(b=>b.classList.remove('on'));btn.classList.add('on');chSteps=parseInt(btn.dataset.steps);}
 function chUpdateStats(){document.getElementById('chTotal').textContent=chT;document.getElementById('chRight').textContent=chR;document.getElementById('chWrong').textContent=chW;}
@@ -1463,6 +1529,7 @@ function onChInput(e){
 function triggerChDebounce(inp){
   clearTimeout(chDebT);
   if(!chRunning||inp.value===''||inp.value==='-'){inp.classList.remove('debouncing');return;}
+  if(!autoAcceptEnabled){inp.classList.remove('debouncing');return;}
   inp.classList.add('debouncing');
   chDebT=setTimeout(()=>{inp.classList.remove('debouncing');chSubmit();},CH_DB);
 }
@@ -2003,7 +2070,7 @@ function wizShowResult(){
 // ── Wizard: Math Storm mini ──────────────────────────────
 let wizMs={running:false,timer:null,left:0,total:0,right:0,wrong:0,ans:0,neg:false,debT:null};
 const WIZ_MS_SEC=60;
-const WIZ_MS_DB=600;
+let WIZ_MS_DB=600; // controlled by settings
 
 function wizMsStart(){
   wizMs={running:true,timer:null,left:WIZ_MS_SEC,total:0,right:0,wrong:0,ans:0,neg:false,debT:null};
@@ -2041,7 +2108,7 @@ function wizMsOnInput(e){
   e.target.value=v;wizMs.neg=v.startsWith('-');
   clearTimeout(wizMs.debT);
   if(!wizMs.running||!v||v==='-')return;
-  wizMs.debT=setTimeout(wizMsSubmit,WIZ_MS_DB);
+  if(autoAcceptEnabled)wizMs.debT=setTimeout(wizMsSubmit,WIZ_MS_DB);
 }
 
 function wizToggleSign(){
@@ -2500,10 +2567,42 @@ const _origShowExercise=showExercise;
 showExercise=function(id,btn){
   _origShowExercise(id,btn);
   if(id==='tHome')renderHomePage();
+  if(id==='tSettings')renderSettingsPage();
 };
 
+function showSettingsPage(btn){
+  stopCurrentExercise();
+  document.querySelectorAll('.pane').forEach(p=>{p.classList.remove('active');p.style.display='none';});
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('statsBtnTop').classList.remove('active');
+  const pane=document.getElementById('tSettings');
+  pane.style.display='block';pane.classList.add('active');
+  // Highlight settings button
+  document.querySelectorAll('.stats-top-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderSettingsPage();
+}
+
 // Init: render home page on load
-window.addEventListener('DOMContentLoaded',()=>{renderHomePage();});
+window.addEventListener('DOMContentLoaded',()=>{
+  // Restore saved theme
+  const savedTheme=SS.get('theme');
+  if(savedTheme){
+    document.documentElement.setAttribute('data-theme',savedTheme);
+    const icon=document.getElementById('themeIcon');
+    if(icon)icon.textContent=savedTheme==='dark'?'☀':'☽';
+  }
+  // Restore debounce/auto-accept settings
+  const savedAutoAccept=SS.get('autoAccept');
+  const savedDb=SS.get('debounceMs');
+  if(savedAutoAccept===false){
+    setAutoAccept(false);
+  }
+  if(savedDb!==null&&savedDb!==undefined&&savedDb!==9999){
+    setDebounceMs(parseInt(savedDb));
+  }
+  renderHomePage();
+});
 
 // Also update stats page to show brain score
 const _origRenderStats=renderStatsPage;
@@ -2578,6 +2677,136 @@ function resetDailyWorkout(){
   // Note: streak is NOT reset — only today's workout result is cleared
   renderHomePage();
 }
+
+
+/* ════════════════════════════════════════════════════════
+   SETTINGS PAGE
+════════════════════════════════════════════════════════ */
+
+function setDebounceMs(ms){
+  MS_DB=ms; CH_DB=ms; WIZ_MS_DB=ms;
+}
+function setAutoAccept(enabled){
+  autoAcceptEnabled=enabled;
+}
+
+function renderSettingsPage(){
+  const container=document.getElementById('settingsPage');
+  if(!container)return;
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const dbMs=MS_DB;
+  const autoAccept=autoAcceptEnabled;
+
+  container.innerHTML='';
+
+  // ── Внешний вид ──
+  const s1=document.createElement('div');
+  s1.className='settings-section';
+  s1.innerHTML=
+    '<div class="settings-section-title">🎨 Внешний вид</div>'+
+    '<div class="settings-row">'+
+      '<div class="settings-row-info">'+
+        '<div class="settings-row-label">Тёмная тема</div>'+
+        '<div class="settings-row-desc">Переключение между светлой и тёмной темой. Сохраняется после перезагрузки.</div>'+
+      '</div>'+
+      '<div class="toggle-wrap">'+
+        '<input type="checkbox" class="toggle-input" id="settingThemeToggle" '+
+          (isDark?'checked':'')+' onchange="onThemeToggle(this)">'+
+        '<label class="toggle-label" for="settingThemeToggle"></label>'+
+      '</div>'+
+    '</div>';
+  container.appendChild(s1);
+
+  // ── Ввод ──
+  const s2=document.createElement('div');
+  s2.className='settings-section';
+  const sliderVal=autoAccept?dbMs:600;
+  s2.innerHTML=
+    '<div class="settings-section-title">⌨ Ввод ответов</div>'+
+    '<div class="settings-row" style="flex-direction:column;align-items:flex-start;gap:10px;">'+
+      '<div style="width:100%;display:flex;align-items:center;justify-content:space-between;">'+
+        '<div class="settings-row-info" style="padding-right:0;">'+
+          '<div class="settings-row-label">Автопринятие ответа</div>'+
+          '<div class="settings-row-desc">Автоматически принимать ответ через N мс после последней цифры. Если выключено — нужно нажимать ОК или Enter.</div>'+
+        '</div>'+
+        '<div class="toggle-wrap">'+
+          '<input type="checkbox" class="toggle-input" id="settingAutoAccept" '+
+            (autoAccept?'checked':'')+' onchange="onAutoAcceptToggle(this)">'+
+          '<label class="toggle-label" for="settingAutoAccept"></label>'+
+        '</div>'+
+      '</div>'+
+      '<div class="range-wrap" id="debounceRangeWrap" style="'+(autoAccept?'':'opacity:.35;pointer-events:none;')+'width:100%;">'+
+        '<span class="range-lbl">200мс</span>'+
+        '<input type="range" class="range-input" id="debounceRange" '+
+          'min="200" max="1500" step="100" value="'+sliderVal+'" oninput="onDebounceChange(this)">'+
+        '<span class="range-lbl">1500мс</span>'+
+        '<span class="debounce-val" id="debounceVal">'+sliderVal+'мс</span>'+
+      '</div>'+
+    '</div>';
+  container.appendChild(s2);
+
+  // ── О приложении ──
+  const s3=document.createElement('div');
+  s3.className='settings-section';
+  s3.innerHTML=
+    '<div class="settings-section-title">ℹ О приложении</div>'+
+    '<div class="settings-row">'+
+      '<div class="settings-row-info">'+
+        '<div class="settings-row-label">Тренажёр мозга</div>'+
+        '<div class="settings-row-desc">5 упражнений для тренировки памяти, счёта и концентрации. Данные хранятся локально на устройстве.</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="settings-row">'+
+      '<div class="settings-row-info">'+
+        '<div class="settings-row-label">Сбросить все данные</div>'+
+        '<div class="settings-row-desc">Удалить всю статистику, Brain Score и историю тренировок.</div>'+
+      '</div>'+
+      '<button onclick="clearAllData()" class="btn danger" style="flex-shrink:0;font-size:12px;padding:7px 14px;">Удалить</button>'+
+    '</div>';
+  container.appendChild(s3);
+}
+
+function onThemeToggle(el){
+  const newTheme=el.checked?'dark':'light';
+  document.documentElement.setAttribute('data-theme',newTheme);
+  document.getElementById('themeIcon').textContent=newTheme==='dark'?'☀':'☽';
+  SS.set('theme',newTheme);
+}
+
+function onAutoAcceptToggle(el){
+  const wrap=document.getElementById('debounceRangeWrap');
+  setAutoAccept(el.checked);
+  if(el.checked){
+    const ms=parseInt(document.getElementById('debounceRange').value)||600;
+    setDebounceMs(ms);
+    SS.set('autoAccept',true);
+    SS.set('debounceMs',ms);
+    if(wrap){wrap.style.opacity='1';wrap.style.pointerEvents='';}
+  } else {
+    SS.set('autoAccept',false);
+    if(wrap){wrap.style.opacity='.35';wrap.style.pointerEvents='none';}
+  }
+}
+
+function onDebounceChange(el){
+  const ms=parseInt(el.value);
+  const val=document.getElementById('debounceVal');
+  if(val)val.textContent=ms+'мс';
+  setDebounceMs(ms);
+  SS.set('debounceMs',ms);
+}
+
+function clearAllData(){
+  if(!confirm('Удалить всю статистику, Brain Score и историю тренировок? Это действие необратимо.'))return;
+  ['globalStat','brainScoreHistory','dailyWorkout','streak','debounceMs','autoAccept','theme'].forEach(k=>localStorage.removeItem(k));
+  setDebounceMs(600);
+  setAutoAccept(true);
+  alert('Данные удалены.');
+  renderSettingsPage();
+  renderHomePage();
+}
+
+stoppers.tSettings=()=>{};
 
 </script>
 </body>
