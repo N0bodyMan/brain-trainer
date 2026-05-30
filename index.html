@@ -1,11 +1,19 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="light">
+<html lang="ru" data-theme="light" id="htmlRoot">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Тренажёр мозга</title>
 <link rel="icon" type="image/png" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
+<script>
+(function(){
+  try{
+    var t=localStorage.getItem('theme');
+    if(t){document.getElementById('htmlRoot').setAttribute('data-theme',t);}
+  }catch(e){}
+})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -776,7 +784,6 @@ function toggleTheme(){
   const h=document.documentElement,dark=h.getAttribute('data-theme')==='dark';
   const newTheme=dark?'light':'dark';
   h.setAttribute('data-theme',newTheme);
-  document.getElementById('themeIcon').textContent=dark?'☽':'☀';
   SS.set('theme',newTheme);
   // Sync settings toggle if open
   const tog=document.getElementById('settingThemeToggle');
@@ -801,9 +808,12 @@ function showStats(btn){
   stopCurrentExercise();
   document.querySelectorAll('.pane').forEach(p=>{p.classList.remove('active');p.style.display='none';});
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  // Clear all top-bar btn active, then set the clicked one
+  document.querySelectorAll('.stats-top-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
   const t0=document.getElementById('t0');
   t0.style.display='block';t0.classList.add('active');
-  document.getElementById('statsBtnTop').classList.add('active');
+  // active already set above
   renderStatsPage();
 }
 
@@ -2566,6 +2576,8 @@ stoppers.tHome=()=>{};
 const _origShowExercise=showExercise;
 showExercise=function(id,btn){
   _origShowExercise(id,btn);
+  // Clear top-bar button active states when switching to exercise/home
+  document.querySelectorAll('.stats-top-btn').forEach(b=>b.classList.remove('active'));
   if(id==='tHome')renderHomePage();
   if(id==='tSettings')renderSettingsPage();
 };
@@ -2574,11 +2586,9 @@ function showSettingsPage(btn){
   stopCurrentExercise();
   document.querySelectorAll('.pane').forEach(p=>{p.classList.remove('active');p.style.display='none';});
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('statsBtnTop').classList.remove('active');
+  document.querySelectorAll('.stats-top-btn').forEach(b=>b.classList.remove('active'));
   const pane=document.getElementById('tSettings');
   pane.style.display='block';pane.classList.add('active');
-  // Highlight settings button
-  document.querySelectorAll('.stats-top-btn').forEach(b=>b.classList.remove('active'));
   if(btn)btn.classList.add('active');
   renderSettingsPage();
 }
@@ -2589,8 +2599,6 @@ window.addEventListener('DOMContentLoaded',()=>{
   const savedTheme=SS.get('theme');
   if(savedTheme){
     document.documentElement.setAttribute('data-theme',savedTheme);
-    const icon=document.getElementById('themeIcon');
-    if(icon)icon.textContent=savedTheme==='dark'?'☀':'☽';
   }
   // Restore debounce/auto-accept settings
   const savedAutoAccept=SS.get('autoAccept');
@@ -2769,7 +2777,6 @@ function renderSettingsPage(){
 function onThemeToggle(el){
   const newTheme=el.checked?'dark':'light';
   document.documentElement.setAttribute('data-theme',newTheme);
-  document.getElementById('themeIcon').textContent=newTheme==='dark'?'☀':'☽';
   SS.set('theme',newTheme);
 }
 
